@@ -1,9 +1,16 @@
 import { useState } from "react";
 import GoogleLoginImage from "../assets/google-login-image.png";
 import supabase from "../API/client";
+import useRedirect from "../hooks/useRedirect";
+import { useLoading } from "../hooks/useLoading";
+import loadingAnimation from "../assets/loading_animation.json";
+import Modal from "../components/Modal";
+import Animation from "../components/Animation";
 
 export const SignUp = () => {
   //TODO: ver a parte de como colocar a sessao do usuario global
+  //TODO: arrumar a url de redirecionamento dps que confirma criacao de conta no email
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -11,8 +18,12 @@ export const SignUp = () => {
     passwordConfirm: "",
   });
 
+  const { isLoading, startLoading, stopLoading } = useLoading();
+
+  const redirectTo = useRedirect();
+
   const redirectToLoginPage = () => {
-    //redirectTo("/login");
+    redirectTo("/");
   };
 
   // const redirectToFormPage = async () => {
@@ -37,6 +48,8 @@ export const SignUp = () => {
         throw new Error("A senha deve ter no mínimo 6 caracteres.");
       }
 
+      startLoading();
+
       const { data, error } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
@@ -58,21 +71,33 @@ export const SignUp = () => {
         password: "",
         passwordConfirm: "",
       });
+      if (data) stopLoading();
 
       // await redirectToFormPage();
     } catch (error) {
       alert(`${error}`);
+    } finally {
+      stopLoading();
     }
   };
 
   const SignInWithGoogle = async () => {
     try {
+      startLoading();
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
       });
       // await redirectToFormPage();
+      console.log(data);
+      if (data) stopLoading();
+      if (error) {
+        console.error("Login error:", error); // Adicionar log de erro
+        alert("Erro ao fazer login: " + error.message);
+      }
     } catch (error) {
       alert("Erro ao tentar conectar com google");
+    } finally {
+      stopLoading();
     }
   };
 
@@ -161,6 +186,11 @@ export const SignUp = () => {
           </button>
         </article>
       </section>
+      {isLoading && (
+        <Modal>
+          <Animation animation={loadingAnimation} />
+        </Modal>
+      )}
     </main>
   );
 };

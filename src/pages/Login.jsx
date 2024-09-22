@@ -1,15 +1,61 @@
 import { useState } from "react";
 import GoogleLoginImage from "../assets/google-login-image.png";
+import supabase from "../API/client";
+import useRedirect from "../hooks/useRedirect";
+import { useLoading } from "../hooks/useLoading";
+import loadingAnimation from "../assets/loading_animation.json";
+import Modal from "../components/Modal";
+import Animation from "../components/Animation";
+
 export const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-  const handleSubmit = () => {};
 
-  const handleChange = () => {};
+  const { isLoading, startLoading, stopLoading } = useLoading();
+
+  const redirectTo = useRedirect();
+
+  const handleSubmit = async (ev) => {
+    ev.preventDefault();
+    try {
+      startLoading();
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (error) {
+        console.error("Login error:", error); // Adicionar log de erro
+        alert("Erro ao fazer login: " + error.message);
+      }
+      console.log(data);
+      setFormData({
+        email: "",
+        password: "",
+      });
+      if (data) stopLoading();
+      //await sucessfulLoginRedirect();
+    } catch (error) {
+      alert(error);
+    } finally {
+      stopLoading();
+    }
+  };
+
+  const handleChange = (ev) => {
+    setFormData({
+      ...formData,
+      [ev.target.name]: ev.target.value,
+    });
+  };
+
   const SignInWithGoogle = () => {};
-  const redirectToSignUpPage = () => {};
+
+  const redirectToSignUpPage = () => {
+    redirectTo("/sign-up");
+  };
 
   return (
     <main className="flex flex-1 items-center justify-center bg-[#E2DEE9] text-[#102a42]">
@@ -73,6 +119,11 @@ export const Login = () => {
           </button>
         </article>
       </section>
+      {isLoading && (
+        <Modal>
+          <Animation animation={loadingAnimation} />
+        </Modal>
+      )}
     </main>
   );
 };
