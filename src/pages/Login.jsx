@@ -35,8 +35,11 @@ export const Login = () => {
         email: "",
         password: "",
       });
-      if (data) stopLoading();
-      //await sucessfulLoginRedirect();
+
+      if (data) {
+        stopLoading();
+        redirectTo("/add-expense");
+      }
     } catch (error) {
       alert(error);
     } finally {
@@ -51,11 +54,35 @@ export const Login = () => {
     });
   };
 
-  const SignInWithGoogle = () => {};
+  const SignInWithGoogle = async () => {
+    try {
+      startLoading();
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: "http://localhost:5173/add-expense", // URL de callback
+        },
+      });
+      console.log(data);
+      if (data) stopLoading();
+
+      if (error) {
+        console.error("Login error:", error); // Adicionar log de erro
+        alert("Erro ao fazer login: " + error.message);
+      }
+      //TODO: verificar a necessidade desse if e talvez trocar por um throw new error
+    } catch (error) {
+      alert("Erro ao tentar conectar com google");
+    } finally {
+      stopLoading();
+    }
+  };
 
   const redirectToSignUpPage = () => {
     redirectTo("/sign-up");
   };
+
+  //TODO: criar um arquivo com todas as funções de redirecionamento
 
   return (
     <main className="flex flex-1 items-center justify-center bg-[#E2DEE9] text-[#102a42]">

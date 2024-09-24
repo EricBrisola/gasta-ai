@@ -26,10 +26,6 @@ export const SignUp = () => {
     redirectTo("/");
   };
 
-  // const redirectToFormPage = async () => {
-  //   redirectTo("/");
-  // };
-
   const handleChange = (ev) => {
     setFormData({
       ...formData,
@@ -71,7 +67,10 @@ export const SignUp = () => {
         password: "",
         passwordConfirm: "",
       });
-      if (data) stopLoading();
+      if (data) {
+        stopLoading();
+        redirectTo("/add-expense");
+      }
 
       // await redirectToFormPage();
     } catch (error) {
@@ -86,14 +85,18 @@ export const SignUp = () => {
       startLoading();
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
+        options: {
+          redirectTo: "http://localhost:5173/add-expense", // URL de callback
+        },
       });
-      // await redirectToFormPage();
       console.log(data);
       if (data) stopLoading();
+
       if (error) {
         console.error("Login error:", error); // Adicionar log de erro
         alert("Erro ao fazer login: " + error.message);
       }
+      //TODO: verificar a necessidade desse if e talvez trocar por um throw new error
     } catch (error) {
       alert("Erro ao tentar conectar com google");
     } finally {
