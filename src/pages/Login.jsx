@@ -7,13 +7,12 @@ import loadingAnimation from "../assets/loading_animation.json";
 import Modal from "../components/Modal";
 import Animation from "../components/Animation";
 
-export const Login = () => {
+export const Login = ({ setToken }) => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-
-  const { isLoading, startLoading, stopLoading } = useLoading();
+  const { isLoading, startLoading } = useLoading();
 
   const redirectTo = useRedirect();
 
@@ -37,13 +36,11 @@ export const Login = () => {
       });
 
       if (data) {
-        stopLoading();
+        //setToken(data);
         redirectTo("/add-expense");
       }
     } catch (error) {
       alert(error);
-    } finally {
-      stopLoading();
     }
   };
 
@@ -54,27 +51,25 @@ export const Login = () => {
     });
   };
 
-  const SignInWithGoogle = async () => {
+  const signInWithGoogle = async () => {
     try {
       startLoading();
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: "http://localhost:5173/add-expense", // URL de callback
+          redirectTo: "http://localhost:5173/add-expense",
         },
       });
-      console.log(data);
-      if (data) stopLoading();
 
       if (error) {
-        console.error("Login error:", error); // Adicionar log de erro
+        console.error("Login error:", error);
         alert("Erro ao fazer login: " + error.message);
+        throw new Error(error.message);
       }
-      //TODO: verificar a necessidade desse if e talvez trocar por um throw new error
+
+      console.log(data);
     } catch (error) {
-      alert("Erro ao tentar conectar com google");
-    } finally {
-      stopLoading();
+      alert("Erro ao tentar conectar com google: " + error.message);
     }
   };
 
@@ -85,7 +80,7 @@ export const Login = () => {
   //TODO: criar um arquivo com todas as funções de redirecionamento
 
   return (
-    <main className="flex flex-1 items-center justify-center bg-[#E2DEE9] text-[#102a42]">
+    <main className="flex h-screen flex-1 items-center justify-center bg-[#E2DEE9] text-[#102a42]">
       <section className="flex w-80 flex-col items-center justify-center rounded-md bg-[#F7F6FA] shadow-lg">
         <p className="w-56 pt-6 text-3xl font-semibold leading-none">Login</p>
         <form className="flex flex-col gap-4 py-6" onSubmit={handleSubmit}>
@@ -126,7 +121,7 @@ export const Login = () => {
           </article>
           <article
             className="flex cursor-pointer items-center justify-center gap-3 rounded-full border-[1px] border-[#645cff] p-3 shadow-md duration-200 hover:shadow-lg hover:shadow-[#645cff]/40"
-            onClick={SignInWithGoogle}
+            onClick={signInWithGoogle}
           >
             <img
               src={GoogleLoginImage}

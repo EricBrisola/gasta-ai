@@ -18,7 +18,7 @@ export const SignUp = () => {
     passwordConfirm: "",
   });
 
-  const { isLoading, startLoading, stopLoading } = useLoading();
+  const { isLoading, startLoading } = useLoading();
 
   const redirectTo = useRedirect();
 
@@ -68,15 +68,10 @@ export const SignUp = () => {
         passwordConfirm: "",
       });
       if (data) {
-        stopLoading();
         redirectTo("/add-expense");
       }
-
-      // await redirectToFormPage();
     } catch (error) {
       alert(`${error}`);
-    } finally {
-      stopLoading();
     }
   };
 
@@ -86,11 +81,10 @@ export const SignUp = () => {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: "http://localhost:5173/add-expense", // URL de callback
+          redirectTo: "http://localhost:5173/add-expense",
         },
       });
       console.log(data);
-      if (data) stopLoading();
 
       if (error) {
         console.error("Login error:", error); // Adicionar log de erro
@@ -99,13 +93,11 @@ export const SignUp = () => {
       //TODO: verificar a necessidade desse if e talvez trocar por um throw new error
     } catch (error) {
       alert("Erro ao tentar conectar com google");
-    } finally {
-      stopLoading();
     }
   };
 
   return (
-    <main className="flex flex-1 items-center justify-center bg-[#E2DEE9] text-[#102a42]">
+    <main className="flex h-screen flex-1 items-center justify-center bg-[#E2DEE9] text-[#102a42]">
       <section className="flex w-80 flex-col items-center justify-center rounded-md bg-[#F7F6FA] shadow-lg">
         <p className="w-56 pt-6 text-3xl font-semibold leading-none">
           Cadastro
