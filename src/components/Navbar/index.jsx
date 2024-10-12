@@ -1,7 +1,8 @@
 import NavbarBtn from "../NavbarBtn";
 
-const Navbar = () => {
+const Navbar = ({ userName, logout }) => {
   //TODO: ver logica de como mudar o botao de logar para deslogar
+
   const navButtonStyle =
     "text-white text-base flex flex-2 items-center tracking-wide hover:bg-[#cfe8ff] duration-200 p-2 rounded-md hover:text-[#617d98]";
   return (
@@ -12,7 +13,11 @@ const Navbar = () => {
         style={"text-white text-2xl flex flex-1 tracking-wide"}
       />
       <article className="flex flex-1 justify-center gap-6">
-        <NavbarBtn textContent={"Hoje"} path={"today"} style={navButtonStyle} />
+        <NavbarBtn
+          textContent={"Hoje"}
+          path={"/today"}
+          style={navButtonStyle}
+        />
         <NavbarBtn
           textContent={"Semanal"}
           path={"/last-seven-days"}
@@ -30,8 +35,10 @@ const Navbar = () => {
         />
       </article>
       <article className="flex flex-1 justify-end">
-        {/* <button onClick={deslogar}>Desconectar</button> */}
-        <p>Bem vindo {"usuário"}</p>
+        <p className={navButtonStyle}>Bem vindo {userName}!</p>
+        <button className={navButtonStyle} onClick={logout}>
+          Desconectar
+        </button>
       </article>
     </nav>
   );
