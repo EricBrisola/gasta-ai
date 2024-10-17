@@ -1,16 +1,13 @@
 import { useState } from "react";
 import GoogleLoginImage from "../assets/google-login-image.png";
-import supabase from "../API/client";
 import useRedirect from "../hooks/useRedirect";
 import { useLoading } from "../hooks/useLoading";
 import loadingAnimation from "../assets/loading_animation.json";
 import Modal from "../components/Modal";
 import Animation from "../components/Animation";
+import { useUser } from "../hooks/useUser";
 
 export const SignUp = () => {
-  //TODO: ver a parte de como colocar a sessao do usuario global
-  //TODO: arrumar a url de redirecionamento dps que confirma criacao de conta no email
-
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -19,6 +16,8 @@ export const SignUp = () => {
   });
 
   const { isLoading, startLoading } = useLoading();
+
+  const { signupUser, loginWithGoogle } = useUser();
 
   const redirectTo = useRedirect();
 
@@ -33,76 +32,16 @@ export const SignUp = () => {
     });
   };
 
-  const handleSubmit = async (ev) => {
-    ev.preventDefault();
-    try {
-      if (formData.password != formData.passwordConfirm) {
-        throw new Error("Confirme sua senha corretamente!");
-      }
-
-      if (formData.password.length < 6) {
-        throw new Error("A senha deve ter no mínimo 6 caracteres.");
-      }
-
-      startLoading();
-
-      const { data, error } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-        options: {
-          data: {
-            name: formData.name,
-          },
-        },
-      });
-
-      if (error) throw new Error(error);
-
-      alert(
-        "Conta criada com sucesso! Cheque seu email e acesse o link de verficação.",
-      );
-      setFormData({
-        name: "",
-        email: "",
-        password: "",
-        passwordConfirm: "",
-      });
-      if (data) {
-        redirectTo("/add-expense");
-      }
-    } catch (error) {
-      alert(`${error}`);
-    }
-  };
-
-  const SignInWithGoogle = async () => {
-    try {
-      startLoading();
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: "http://localhost:5173/add-expense",
-        },
-      });
-      console.log(data);
-
-      if (error) {
-        console.error("Login error:", error); // Adicionar log de erro
-        alert("Erro ao fazer login: " + error.message);
-      }
-      //TODO: verificar a necessidade desse if e talvez trocar por um throw new error
-    } catch (error) {
-      alert("Erro ao tentar conectar com google");
-    }
-  };
-
   return (
     <main className="flex h-screen flex-1 items-center justify-center bg-[#E2DEE9] text-[#102a42]">
       <section className="flex w-80 flex-col items-center justify-center rounded-md bg-[#F7F6FA] shadow-lg">
         <p className="w-56 pt-6 text-3xl font-semibold leading-none">
           Cadastro
         </p>
-        <form className="flex flex-col gap-4 py-6" onSubmit={handleSubmit}>
+        <form
+          className="flex flex-col gap-4 py-6"
+          onSubmit={(ev) => signupUser(ev, startLoading, formData, setFormData)}
+        >
           <label htmlFor="name-input">
             <input
               type="text"
@@ -161,7 +100,7 @@ export const SignUp = () => {
           </article>
           <article
             className="flex cursor-pointer items-center justify-center gap-3 rounded-full border-[1px] border-[#645cff] p-3 shadow-md duration-200 hover:shadow-lg hover:shadow-[#645cff]/40"
-            onClick={SignInWithGoogle}
+            onClick={loginWithGoogle}
           >
             <img
               src={GoogleLoginImage}

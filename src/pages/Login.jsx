@@ -29,24 +29,13 @@ export const Login = () => {
     redirectTo("/sign-up");
   };
 
-  //TODO: criar um arquivo com todas as funções de redirecionamento
-
   return (
     <main className="flex h-screen flex-1 items-center justify-center bg-[#E2DEE9] text-[#102a42]">
       <section className="flex w-80 flex-col items-center justify-center rounded-md bg-[#F7F6FA] shadow-lg">
         <p className="w-56 pt-6 text-3xl font-semibold leading-none">Login</p>
         <form
           className="flex flex-col gap-4 py-6"
-          onSubmit={(ev) =>
-            loginUser(
-              ev,
-              startLoading,
-              stopLoading,
-              setFormData,
-              formData.email,
-              formData.password,
-            )
-          }
+          onSubmit={(ev) => loginUser(ev, startLoading, stopLoading, formData)}
         >
           <label htmlFor="email-input">
             <input

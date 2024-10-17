@@ -1,7 +1,9 @@
+import { useUser } from "../../hooks/useUser";
 import NavbarBtn from "../NavbarBtn";
 
-const Navbar = ({ userName, logout }) => {
-  //TODO: ver logica de como mudar o botao de logar para deslogar
+const Navbar = () => {
+  //TODO: ver como fazer para persistir o nome do usuario dps que a pagina recarrega (talvez um refetch)
+  const { userData, logoutUser } = useUser();
 
   const navButtonStyle =
     "text-white text-base flex flex-2 items-center tracking-wide hover:bg-[#cfe8ff] duration-200 p-2 rounded-md hover:text-[#617d98]";
@@ -35,8 +37,8 @@ const Navbar = ({ userName, logout }) => {
         />
       </article>
       <article className="flex flex-1 justify-end">
-        <p className={navButtonStyle}>Bem vindo {userName}!</p>
-        <button className={navButtonStyle} onClick={logout}>
+        <p className={navButtonStyle}>Bem vindo {userData?.name}!</p>
+        <button className={navButtonStyle} onClick={logoutUser}>
           Desconectar
         </button>
       </article>
