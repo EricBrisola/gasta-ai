@@ -2,19 +2,67 @@ import dayjs from "dayjs";
 import { useState } from "react";
 
 const Form = () => {
+  const [expenseValue, setExpenseValue] = useState("0,00");
   const [expense, setExpense] = useState({
+    id: "",
     title: "",
-    value: "",
-    category: "",
-    date: "",
+    value: expenseValue,
+    category: "food",
+    date: dayjs().format("YYYY-MM-DD"),
   });
-  const handleSubmit = () => {};
 
-  const handleExpenseInputs = () => {};
+  const handleSubmit = (ev) => {
+    ev.preventDefault();
 
-  const handleExpenseValueChange = () => {};
+    // setAllExpenses((prev) => {
+    //   const updatedExpenses = [
+    //     ...prev,
+    //     { ...expense, value: expenseValue.replace(",", ".") },
+    //   ];
+    //   localStorage.setItem("all-expenses", JSON.stringify(updatedExpenses));
+    //   return updatedExpenses;
+    // });
+    //TODO: trocar pra adicionar o gasto no firebase
 
-  const expenseValue = 0;
+    setExpense({
+      ...expense,
+      title: "",
+      value: "",
+      category: "food",
+      date: dayjs().format("YYYY-MM-DD"),
+    });
+
+    setExpenseValue("0,00");
+  };
+
+  const handleExpenseInputs = (ev) => {
+    setExpense((prev) => ({
+      ...prev,
+      id: "" + Math.floor(Math.random() * 100000),
+      [ev.target.name]: ev.target.value,
+    }));
+  };
+
+  const handleExpenseValueChange = (e) => {
+    let inputValue = e.target.value;
+
+    // Remove todos os caracteres que não são números
+    inputValue = inputValue.replace(/\D/g, "");
+
+    // Adiciona zeros à esquerda se necessário
+    while (inputValue.length < 3) {
+      inputValue = "0" + inputValue;
+    }
+
+    // Formata o valor para incluir a vírgula
+    const formattedValue = inputValue.slice(0, -2) + "," + inputValue.slice(-2);
+
+    // Remove zeros à esquerda desnecessários no lado dos reais
+    const finalValue = formattedValue.replace(/^0+(?!,)/, "");
+
+    // Se após a remoção dos zeros o valor estiver vazio, atribui "0,00"
+    setExpenseValue(finalValue === "" ? "0,00" : finalValue);
+  };
 
   const categories = [
     {
