@@ -3,7 +3,8 @@ import NavbarBtn from "../NavbarBtn";
 
 const Navbar = () => {
   //TODO: ver como fazer para persistir o nome do usuario dps que a pagina recarrega (talvez um refetch)
-  const { userData, logoutUser } = useUser();
+  const { userData, logoutUser, user } = useUser();
+  //console.log(`Navbar: ${user}`);
 
   const navButtonStyle =
     "text-white text-base flex flex-2 items-center tracking-wide hover:bg-[#cfe8ff] duration-200 p-2 rounded-md hover:text-[#617d98]";

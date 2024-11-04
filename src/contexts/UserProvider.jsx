@@ -8,7 +8,7 @@ import {
   signInWithPopup,
   signOut,
 } from "firebase/auth";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
 
 export const UserContext = createContext();
 
@@ -21,7 +21,7 @@ const UserProvider = ({ children }) => {
   useEffect(() => {
     if (user) {
       getUserData(user?.uid);
-      console.log(userData);
+      console.log(`Dados usuário: ${userData}`);
     }
   }, [user]);
 
@@ -30,13 +30,15 @@ const UserProvider = ({ children }) => {
     const docSnap = await getDoc(doc(db, "users", id));
 
     if (docSnap.exists()) {
-      console.log(docSnap.data());
+      console.log(`Snapshot do usuario: ${docSnap.data()}`);
       setUserData(docSnap.data());
     } else {
       // docSnap.data() will be undefined in this case
       console.log("No user found!");
     }
   };
+  console.log(`userData: ${userData?.name}`);
+  //parei aqui
 
   //Entrar com um usuario que ja existe email/senha
   const loginUser = async (ev, startLoading, stopLoading, formData) => {
@@ -50,7 +52,7 @@ const UserProvider = ({ children }) => {
         formData.password,
       );
       setUser(newUser.user);
-      console.log(user);
+      console.log(`login com login:${user}`);
 
       if (newUser.user) {
         redirectTo("/add-expense");
@@ -63,28 +65,12 @@ const UserProvider = ({ children }) => {
     }
   };
 
-  // const loginWithGoogle = async (startLoading, stopLoading) => {
-  //   try {
-  //     startLoading();
-  //     const { data, error } = await supabase.auth.signInWithOAuth({
-  //       provider: "google",
-  //       options: {
-  //         redirectTo: "http://localhost:5173/add-expense",
-  //       },
-  //     });
-  //     console.log(data);
-
-  //     if (data) await saveUser();
-
-  //     if (error) {
-  //       console.error("Login error:", error); // Adicionar log de erro
-  //       alert("Erro ao fazer login: " + error.message);
-  //       stopLoading();
-  //     }
-  //   } catch (error) {
-  //     alert("Erro ao tentar conectar com google");
-  //   }
-  // };
+  const verifyIUD = async () => {
+    const usersCollection = collection(db, "users");
+    const usersSnapshot = await getDocs(usersCollection);
+    console.log(usersSnapshot.docs);
+  };
+  //verifyIUD();
 
   const loginWithGoogle = async (startLoading, stopLoading) => {
     //startLoading();
@@ -97,9 +83,10 @@ const UserProvider = ({ children }) => {
       //const credential = GoogleAuthProvider.credentialFromResult(result);
       // Informações do usuário logado
       const user = result.user;
-      console.log(user);
+      console.log(`Login com google: ${result.user}`);
       if (user) {
         setUser(user);
+        redirectTo("/add-expense");
       }
     } catch (error) {
       // Trate os erros aqui
