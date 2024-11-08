@@ -3,11 +3,13 @@ import NavbarBtn from "../NavbarBtn";
 
 const Navbar = () => {
   //TODO: ver como fazer para persistir o nome do usuario dps que a pagina recarrega (talvez um refetch)
-  const { userData, logoutUser, user } = useUser();
-  //console.log(`Navbar: ${user}`);
+  const { userData, logoutUser } = useUser();
 
   const navButtonStyle =
     "text-white text-base flex flex-2 items-center tracking-wide hover:bg-[#cfe8ff] duration-200 p-2 rounded-md hover:text-[#617d98]";
+
+  const userNameStyle =
+    "text-white text-base flex flex-2 items-center tracking-wide p-2 rounded-md";
   return (
     <nav className="flex w-full bg-[#645cff] px-6 py-1">
       <NavbarBtn
@@ -38,7 +40,12 @@ const Navbar = () => {
         />
       </article>
       <article className="flex flex-1 justify-end">
-        <p className={navButtonStyle}>Bem vindo {userData?.name}!</p>
+        <p className={userNameStyle}>
+          Bem vindo{" "}
+          {userData?.name[0].toUpperCase() +
+            userData?.name.slice(1, userData?.name.length)}
+          !
+        </p>
         <button className={navButtonStyle} onClick={logoutUser}>
           Desconectar
         </button>
