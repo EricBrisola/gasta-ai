@@ -4,6 +4,7 @@ import { auth, db } from "../API/firebase";
 import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
+  onAuthStateChanged,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
@@ -12,11 +13,28 @@ import { collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
 
 export const UserContext = createContext();
 
+// eslint-disable-next-line react/prop-types
 const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const redirectTo = useRedirect();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        setUser(firebaseUser);
+        getUserData(firebaseUser.uid); // Faz o fetch dos dados do usuário
+      } else {
+        setUser(null);
+        setUserData(null);
+      }
+      setLoading(false); // Define `loading` como `false` após a verificação
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     if (user) {
@@ -74,35 +92,44 @@ const UserProvider = ({ children }) => {
 
   const loginWithGoogle = async (startLoading, stopLoading) => {
     //startLoading();
-    //TODO: ver como fazer para usar com redirect
     const provider = new GoogleAuthProvider();
     try {
       const result = await signInWithPopup(auth, provider);
-
-      // Obtém o token de acesso do Google para acessar a API do Google
-      //const credential = GoogleAuthProvider.credentialFromResult(result);
-      // Informações do usuário logado
       const user = result.user;
-      console.log(`Login com google: ${result.user}`);
+
       if (user) {
+        // Verifica se o usuário já existe no Firestore
+        const userDocRef = doc(db, "users", user.uid);
+        const userSnapshot = await getDoc(userDocRef);
+
+        if (!userSnapshot.exists()) {
+          // Cria o documento do usuário no Firestore
+          const docData = {
+            uid: user.uid,
+            email: user.email,
+            name: user.displayName,
+          };
+          await setDoc(userDocRef, docData);
+        }
+
+        // Atualiza o estado do usuário e redireciona
         setUser(user);
         redirectTo("/add-expense");
       }
     } catch (error) {
-      // Trate os erros aqui
-      const errorCode = error.code;
-      const errorMessage = error.message;
+      console.error("Erro no login com Google:", error);
+      alert(`Erro: ${error.message}`);
+    } finally {
       stopLoading();
     }
   };
 
   const signupUser = async (ev, startLoading, formData, stopLoading) => {
     ev.preventDefault();
-    //chama o loading aqui e no login pois se deixasse só o do login ele tem um delay estranho para fazer o loading, rever futuramente
     startLoading();
 
     try {
-      if (formData.password != formData.passwordConfirm) {
+      if (formData.password !== formData.passwordConfirm) {
         throw new Error("Confirme sua senha corretamente!");
       }
 
@@ -110,6 +137,15 @@ const UserProvider = ({ children }) => {
         throw new Error("A senha deve ter no mínimo 6 caracteres.");
       }
 
+      // Verifica se o usuário já existe no Firestore pelo email
+      const userDocRef = doc(db, "users", formData.email);
+      const userSnapshot = await getDoc(userDocRef);
+
+      if (userSnapshot.exists()) {
+        throw new Error("Esse usuário já está cadastrado.");
+      }
+
+      // Cria a conta de autenticação
       const newUser = await createUserWithEmailAndPassword(
         auth,
         formData.email,
@@ -117,17 +153,20 @@ const UserProvider = ({ children }) => {
       );
       const userUid = newUser.user.uid;
 
+      // Cria o documento do usuário no Firestore
       const docData = {
         uid: userUid,
         email: formData.email,
         name: formData.name,
       };
       await setDoc(doc(db, "users", userUid), docData);
+
       if (newUser) {
         loginUser(ev, startLoading, stopLoading, formData);
       }
     } catch (error) {
-      alert(error);
+      alert(error.message);
+      stopLoading();
     }
   };
 
@@ -145,6 +184,7 @@ const UserProvider = ({ children }) => {
       value={{
         user,
         userData,
+        loading,
         setUser,
         loginUser,
         loginWithGoogle,
