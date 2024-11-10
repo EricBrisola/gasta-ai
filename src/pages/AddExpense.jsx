@@ -1,6 +1,5 @@
 import Form from "../components/Form";
 import Navbar from "../components/Navbar";
-import { useUser } from "../hooks/useUser";
 
 export const AddExpense = () => {
   return (

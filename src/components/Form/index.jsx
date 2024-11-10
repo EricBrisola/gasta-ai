@@ -1,28 +1,37 @@
 import dayjs from "dayjs";
+import { addDoc, collection, doc } from "firebase/firestore";
 import { useState } from "react";
+import { db } from "../../API/firebase";
+import { useUser } from "../../hooks/useUser";
 
 const Form = () => {
   const [expenseValue, setExpenseValue] = useState("0,00");
   const [expense, setExpense] = useState({
-    id: "",
     title: "",
     value: expenseValue,
     category: "food",
     date: dayjs().format("YYYY-MM-DD"),
   });
+  const { userData } = useUser();
 
-  const handleSubmit = (ev) => {
+  console.log(userData);
+
+  const addExpense = async (expense, userRef) => {
+    try {
+      await addDoc(collection(doc(db, "users", userRef), "expenses"), {
+        ...expense,
+        value: expenseValue.replace(",", "."),
+      });
+      alert("adicionado com sucesso!");
+    } catch (error) {
+      alert(`Erro ao criar gasto: ${error}`);
+    }
+  };
+
+  const handleSubmit = async (ev) => {
     ev.preventDefault();
 
-    // setAllExpenses((prev) => {
-    //   const updatedExpenses = [
-    //     ...prev,
-    //     { ...expense, value: expenseValue.replace(",", ".") },
-    //   ];
-    //   localStorage.setItem("all-expenses", JSON.stringify(updatedExpenses));
-    //   return updatedExpenses;
-    // });
-    //TODO: trocar pra adicionar o gasto no firebase
+    await addExpense(expense, userData.uid);
 
     setExpense({
       ...expense,
@@ -38,7 +47,6 @@ const Form = () => {
   const handleExpenseInputs = (ev) => {
     setExpense((prev) => ({
       ...prev,
-      id: "" + Math.floor(Math.random() * 100000),
       [ev.target.name]: ev.target.value,
     }));
   };
