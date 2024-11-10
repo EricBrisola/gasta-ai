@@ -9,7 +9,7 @@ import {
   signInWithPopup,
   signOut,
 } from "firebase/auth";
-import { collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 export const UserContext = createContext();
 
@@ -39,7 +39,6 @@ const UserProvider = ({ children }) => {
   useEffect(() => {
     if (user) {
       getUserData(user?.uid);
-      console.log(`Dados usuário: ${userData}`);
     }
   }, [user]);
 
@@ -48,15 +47,12 @@ const UserProvider = ({ children }) => {
     const docSnap = await getDoc(doc(db, "users", id));
 
     if (docSnap.exists()) {
-      console.log(`Snapshot do usuario: ${docSnap.data()}`);
       setUserData(docSnap.data());
     } else {
       // docSnap.data() will be undefined in this case
-      console.log("No user found!");
+      console.log("Usuário não encontrado");
     }
   };
-  console.log(`userData: ${userData?.name}`);
-  //parei aqui
 
   //Entrar com um usuario que ja existe email/senha
   const loginUser = async (ev, startLoading, stopLoading, formData) => {
@@ -70,25 +66,16 @@ const UserProvider = ({ children }) => {
         formData.password,
       );
       setUser(newUser.user);
-      console.log(`login com login:${user}`);
-
       if (newUser.user) {
         redirectTo("/add-expense");
       }
     } catch (error) {
       const errorCode = error.code;
       const errorMessage = error.message;
-      console.log(error);
+      alert(`Erro: ${errorCode}\n${errorMessage}`);
       stopLoading();
     }
   };
-
-  const verifyIUD = async () => {
-    const usersCollection = collection(db, "users");
-    const usersSnapshot = await getDocs(usersCollection);
-    console.log(usersSnapshot.docs);
-  };
-  //verifyIUD();
 
   const loginWithGoogle = async (startLoading, stopLoading) => {
     //startLoading();
@@ -117,9 +104,7 @@ const UserProvider = ({ children }) => {
         redirectTo("/add-expense");
       }
     } catch (error) {
-      console.error("Erro no login com Google:", error);
       alert(`Erro: ${error.message}`);
-    } finally {
       stopLoading();
     }
   };
@@ -186,6 +171,7 @@ const UserProvider = ({ children }) => {
         userData,
         loading,
         setUser,
+        getUserData,
         loginUser,
         loginWithGoogle,
         signupUser,
