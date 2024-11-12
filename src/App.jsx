@@ -1,5 +1,5 @@
 import "./App.css";
-import { Login, SignUp, AddExpense } from "./pages";
+import { Login, SignUp, AddExpense, Today } from "./pages";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { Routes, Route } from "react-router-dom";
 
@@ -13,6 +13,14 @@ function App() {
         element={
           <ProtectedRoute>
             <AddExpense />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/today"
+        element={
+          <ProtectedRoute>
+            <Today />
           </ProtectedRoute>
         }
       />
