@@ -11,7 +11,7 @@ const ExpenseCard = ({
   return (
     <article
       key={id}
-      className="flex max-h-52 min-h-48 w-48 flex-col items-center justify-between rounded-md bg-[#F7F6FA] shadow-md duration-200 hover:scale-105"
+      className="flex max-h-52 min-h-48 w-48 flex-col items-center justify-between rounded-md bg-[#F7F6FA] text-white shadow-md duration-200 hover:scale-105"
     >
       <p className="w-full rounded-t-md bg-[#645cff] p-1 text-center text-xl font-bold">
         {title[0].toUpperCase() + title.slice(1, 12)}
