@@ -64,7 +64,7 @@ export const Login = () => {
           <button className="text-left text-sm font-bold text-[#645cff]">
             Esqueceu a senha ?
           </button>
-          <button className="rounded-md bg-[#645cff] p-2 text-white shadow-sm shadow-[#645cff]/20 duration-200 hover:shadow-lg hover:shadow-[#645cff]/40">
+          <button className="w-56 rounded-md bg-[#645cff] p-2 text-white shadow-sm shadow-[#645cff]/20 duration-200 hover:shadow-lg hover:shadow-[#645cff]/40">
             Conectar
           </button>
           <article className="flex items-center justify-center gap-2">
