@@ -1,32 +1,6 @@
 /* eslint-disable react/prop-types */
+import { categories } from "../../utils/categories";
 const Sidebar = ({ children }) => {
-  const categories = [
-    {
-      name: "Alimentação",
-      value: "food",
-    },
-    {
-      name: "Transporte",
-      value: "transport",
-    },
-    {
-      name: "Entretenimento",
-      value: "enterteinment",
-    },
-    {
-      name: "Moradia",
-      value: "home",
-    },
-    {
-      name: "Saúde",
-      value: "health",
-    },
-    {
-      name: "Diversos",
-      value: "miscellaneous",
-    },
-  ];
-
   return (
     <aside className="flex w-[12%] items-center">
       <article className="flex w-full flex-col justify-center gap-5 rounded-br-md rounded-tr-md bg-[#F7F6FA] py-5 text-black shadow-md">
