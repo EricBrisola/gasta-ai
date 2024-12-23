@@ -11,6 +11,7 @@ import {
   getDocs,
   deleteDoc,
   doc,
+  updateDoc,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { db } from "../API/firebase";
@@ -20,17 +21,29 @@ import Modal from "../components/Modal";
 import Animation from "../components/Animation";
 import loadingAnimation from "../assets/loading_animation.json";
 import categoriesImgHashMap from "../assets/categoriesImgsHashMap";
+import EditForm from "../components/UpdateForm";
+import useModal from "../hooks/useModal";
+import { categories } from "../utils/categories";
 
 export const Today = () => {
   const [dailyExpenses, setDailyExpenses] = useState([]);
   const [dailyTotal, setDailyTotal] = useState(0);
+  const [editedExpense, setEditedExpense] = useState({
+    title: "",
+    value: "",
+    category: "",
+    date: "",
+  });
+  const [expenseValue, setExpenseValue] = useState("");
   const { isLoading, startLoading, stopLoading } = useLoading();
   const { userData } = useUser();
+  const { isModalOpen, openModal, closeModal } = useModal();
 
   useEffect(() => {
     if (userData?.uid) getDailyExpenses();
   }, [userData]);
 
+  //usado para atualizar os valores totais dos gastos diarios
   useEffect(() => {
     getDailyTotal();
   }, [dailyExpenses]);
@@ -66,8 +79,12 @@ export const Today = () => {
       const querySnapshot = await getDocs(q);
       if (querySnapshot) stopLoading();
 
-      querySnapshot.forEach((doc) => {
-        setDailyExpenses((prev) => [...prev, { id: doc?.id, ...doc?.data() }]);
+      setDailyExpenses(() => {
+        const newExpenses = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        return newExpenses;
       });
     } catch (error) {
       alert(`Erro: ${error}`);
@@ -79,14 +96,67 @@ export const Today = () => {
   const deleteExpense = async (id, title) => {
     try {
       await deleteDoc(doc(db, "users", userData.uid, "expenses", id));
-      //await getDailyExpenses();
-      //TODO: implementar um jeito de recarregar a pagina e ver pq toda vez q recarrega, os gastos duplicam
+      await getDailyExpenses();
     } catch (error) {
       alert(`Erro: ${error}\n Ao excluir o gasto: ${title}`);
     }
   };
 
-  console.log(dailyExpenses);
+  const setCurrentExpense = (currentExpense) => {
+    // seta o gasto que quer alterar dentro dos inputs do modal
+    setEditedExpense(currentExpense);
+    // seta o valor do gasto que quer alterar para o valor dentro do modal
+    // tambem troca o ponto do valor para vírgula com intuito de ficar no sistema numerico br
+    setExpenseValue(currentExpense.value.replace(".", ","));
+  };
+
+  const handleExpenseInputs = (ev) => {
+    setEditedExpense({
+      ...editedExpense,
+      [ev.target.name]: ev.target.value,
+    });
+  };
+
+  const submitUpdatedExpense = async (ev) => {
+    ev.preventDefault();
+    //troca de vírgula para ponto para quando salvar nao resultar em NaN
+    const expenseWithValueFixed = {
+      title: editedExpense.title,
+      value: expenseValue.replace(",", "."),
+      category: editedExpense.category,
+      date: editedExpense.date,
+    };
+
+    //testar se funciona assim
+    // const expenseWithValueFixed = {
+    //   ...editedExpense,
+    //   value: expenseValue.replace(",", "."),
+    // };
+
+    const expenseRef = doc(
+      db,
+      "users",
+      userData.uid,
+      "expenses",
+      editedExpense.id,
+    );
+
+    try {
+      await updateDoc(expenseRef, expenseWithValueFixed);
+      alert("Gasto atualizado com sucesso!");
+      closeModal();
+      await getDailyExpenses();
+    } catch (error) {
+      alert(`Erro ao atualizar gasto: ${error}`);
+    }
+  };
+
+  const handleExpenseValueChange = (e) => {
+    let inputValue = e.target.value;
+    // Remove todos os caracteres que não são números
+    inputValue = inputValue.replace(/[^\d,]/g, "");
+    setExpenseValue(inputValue);
+  };
 
   return (
     <main className="flex h-screen flex-col bg-[#E2DEE9]">
@@ -113,6 +183,10 @@ export const Today = () => {
                       deleteExpense={() =>
                         deleteExpense(expense.id, expense.title)
                       }
+                      getCurrentExpense={() => {
+                        setCurrentExpense(expense);
+                        openModal();
+                      }}
                     />
                   );
                 })
@@ -125,6 +199,30 @@ export const Today = () => {
           </article>
         </section>
       </section>
+      {isModalOpen && (
+        <Modal>
+          <section className="flex flex-col rounded bg-[#F7F6FA] p-2">
+            <article className="flex w-full justify-end">
+              <button
+                type="button"
+                className="h-8 w-8 cursor-pointer rounded border-none bg-red-600 pb-1 text-lg text-white"
+                onClick={closeModal}
+              >
+                x
+              </button>
+            </article>
+            <EditForm
+              categories={categories}
+              maxDate={dayjs().format("YYYY-MM-DD")}
+              expense={editedExpense}
+              handleExpenseInputs={handleExpenseInputs}
+              handleExpenseValueChange={handleExpenseValueChange}
+              updateExpense={submitUpdatedExpense}
+              expenseValue={expenseValue}
+            />
+          </section>
+        </Modal>
+      )}
     </main>
   );
 };
