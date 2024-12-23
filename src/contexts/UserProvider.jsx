@@ -49,8 +49,7 @@ const UserProvider = ({ children }) => {
     if (docSnap.exists()) {
       setUserData(docSnap.data());
     } else {
-      // docSnap.data() will be undefined in this case
-      console.log("Usuário não encontrado");
+      alert("Usuário não encontrado");
     }
   };
 
@@ -158,9 +157,8 @@ const UserProvider = ({ children }) => {
   const logoutUser = async () => {
     try {
       await signOut(auth);
-      console.log("deslogou");
     } catch (error) {
-      console.log(error);
+      alert(`Erro ao deslogar: ${error}`);
     }
   };
 
