@@ -25,7 +25,7 @@ const Navbar = () => {
         />
         <NavbarBtn
           textContent={"Semanal"}
-          path={"/last-seven-days"}
+          path={"/last-week"}
           style={navButtonStyle}
         />
         <NavbarBtn
