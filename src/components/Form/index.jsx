@@ -1,8 +1,9 @@
 import dayjs from "dayjs";
-import { addDoc, collection, doc } from "firebase/firestore";
+import { addDoc, collection, doc, Timestamp } from "firebase/firestore";
 import { useState } from "react";
 import { db } from "../../API/firebase";
 import { useUser } from "../../hooks/useUser";
+import { categories } from "../../utils/categories";
 
 const Form = () => {
   const [expenseValue, setExpenseValue] = useState("0,00");
@@ -13,8 +14,6 @@ const Form = () => {
     date: dayjs().format("YYYY-MM-DD"),
   });
   const { userData } = useUser();
-
-  console.log(userData);
 
   const addExpense = async (expense, userRef) => {
     try {
@@ -31,7 +30,13 @@ const Form = () => {
   const handleSubmit = async (ev) => {
     ev.preventDefault();
 
-    await addExpense(expense, userData.uid);
+    const expenseWithFormatedDate = {
+      ...expense,
+      //trocando o formato da data para que o firebase consiga interpretar e salvar no modo correto
+      date: Timestamp.fromDate(dayjs(expense.date).toDate()),
+    };
+
+    await addExpense(expenseWithFormatedDate, userData.uid);
 
     setExpense({
       ...expense,
@@ -43,6 +48,14 @@ const Form = () => {
 
     setExpenseValue("0,00");
   };
+  const aux = dayjs(expense.date).toDate().toString();
+  console.log(
+    aux.slice(0, 16) + dayjs().format("hh:mm:ss") + aux.slice(24, aux.length),
+  );
+  console.log(new Date());
+  console.log(dayjs().format("hh:mm:ss"));
+
+  //TODO:verificar erro de timestamp
 
   const handleExpenseInputs = (ev) => {
     setExpense((prev) => ({
@@ -71,33 +84,6 @@ const Form = () => {
     // Se após a remoção dos zeros o valor estiver vazio, atribui "0,00"
     setExpenseValue(finalValue === "" ? "0,00" : finalValue);
   };
-
-  const categories = [
-    {
-      name: "Alimentação",
-      value: "food",
-    },
-    {
-      name: "Transporte",
-      value: "transport",
-    },
-    {
-      name: "Entretenimento",
-      value: "enterteinment",
-    },
-    {
-      name: "Moradia",
-      value: "home",
-    },
-    {
-      name: "Saúde",
-      value: "health",
-    },
-    {
-      name: "Diversos",
-      value: "miscellaneous",
-    },
-  ];
 
   return (
     <article className="flex w-80 items-center justify-center rounded-md bg-[#F7F6FA] shadow-lg">
