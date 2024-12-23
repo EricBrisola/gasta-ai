@@ -5,7 +5,7 @@ const ExpenseCard = ({
   title,
   value,
   deleteExpense,
-  editExpense,
+  getCurrentExpense,
   categoryImg,
 }) => {
   return (
@@ -23,7 +23,7 @@ const ExpenseCard = ({
       <div className="flex h-1/6 w-full rounded-b-md border-t-2 border-[#645cff]">
         <button
           className="w-1/2 rounded-bl-md border-r-[1px] border-[#645cff] text-green-700"
-          onClick={editExpense}
+          onClick={getCurrentExpense}
         >
           Alterar
         </button>
