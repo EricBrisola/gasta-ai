@@ -25,9 +25,10 @@ import EditForm from "../components/UpdateForm";
 import useModal from "../hooks/useModal";
 import { categories } from "../utils/categories";
 
-export const LastWeek = () => {
-  const [weeklyExpenses, setWeeklyExpenses] = useState([]);
-  const [weeklyTotal, setWeeklyTotal] = useState(0);
+export const AllExpenses = () => {
+  //TODO: adicionar o filtro dos meses nessa pagina
+  const [allExpenses, setAllExpenses] = useState([]);
+  const [expensesTotal, setExpensesTotal] = useState(0);
   const [editedExpense, setEditedExpense] = useState({
     title: "",
     value: "",
@@ -40,26 +41,26 @@ export const LastWeek = () => {
   const { isModalOpen, openModal, closeModal } = useModal();
 
   useEffect(() => {
-    if (userData?.uid) getWeeklyExpenses();
+    if (userData?.uid) getAllExpenses();
   }, [userData]);
 
   //usado para atualizar os valores totais dos gastos diarios
   useEffect(() => {
-    getWeeklyTotal();
-  }, [weeklyExpenses]);
+    getExpensesTotal();
+  }, [allExpenses]);
 
-  const getWeeklyTotal = () => {
-    const weeklyTotalValue =
-      weeklyExpenses.length > 0
-        ? weeklyExpenses.reduce((acc, item) => {
+  const getExpensesTotal = () => {
+    const expensesTotalValue =
+      allExpenses.length > 0
+        ? allExpenses.reduce((acc, item) => {
             return (acc += +item.value);
           }, 0)
         : 0;
 
-    setWeeklyTotal(weeklyTotalValue);
+    setExpensesTotal(expensesTotalValue);
   };
 
-  const getWeeklyExpenses = async () => {
+  const getAllExpenses = async () => {
     try {
       startLoading();
       const expenseCollection = collection(
@@ -69,17 +70,17 @@ export const LastWeek = () => {
         "expenses",
       );
 
-      // Filtrar os gastos que foram referentes a ultima semana
+      // Filtrar os gastos que foram referentes ao ultimo mes
       const q = query(
         expenseCollection,
-        where("date", ">=", dayjs().startOf("week").valueOf()),
+        where("date", ">=", dayjs().startOf("year").valueOf()),
       );
 
       // Buscar os documentos
       const querySnapshot = await getDocs(q);
       if (querySnapshot) stopLoading();
 
-      setWeeklyExpenses(() => {
+      setAllExpenses(() => {
         const newExpenses = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
@@ -96,7 +97,7 @@ export const LastWeek = () => {
   const deleteExpense = async (id, title) => {
     try {
       await deleteDoc(doc(db, "users", userData.uid, "expenses", id));
-      await getWeeklyExpenses();
+      await getAllExpenses();
     } catch (error) {
       alert(`Erro: ${error}\n Ao excluir o gasto: ${title}`);
     }
@@ -145,7 +146,7 @@ export const LastWeek = () => {
       await updateDoc(expenseRef, expenseWithValueFixed);
       alert("Gasto atualizado com sucesso!");
       closeModal();
-      await getWeeklyExpenses();
+      await getAllExpenses();
     } catch (error) {
       alert(`Erro ao atualizar gasto: ${error}`);
     }
@@ -164,15 +165,15 @@ export const LastWeek = () => {
       <section className="flex flex-1">
         <Sidebar />
         <section className="flex flex-1 flex-col gap-3">
-          <Header total={weeklyTotal} date={dayjs().format("DD/MM/YYYY")} />
+          <Header total={expensesTotal} date={dayjs().format("DD/MM/YYYY")} />
           <article className="flex justify-center pb-7">
             <div className="flex w-full flex-wrap gap-6 px-9">
               {isLoading ? (
                 <Modal>
                   <Animation animation={loadingAnimation} />
                 </Modal>
-              ) : weeklyExpenses.length >= 1 ? (
-                weeklyExpenses.map((expense) => {
+              ) : allExpenses.length >= 1 ? (
+                allExpenses.map((expense) => {
                   return (
                     <ExpenseCard
                       key={expense.id}
@@ -192,7 +193,7 @@ export const LastWeek = () => {
                 })
               ) : (
                 <p className="flex w-full justify-center text-2xl font-normal text-[#102a42]">
-                  Sem gastos registrados nos últimos 7 dias
+                  Sem gastos registrados
                 </p>
               )}
             </div>
