@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { addDoc, collection, doc, Timestamp } from "firebase/firestore";
+import { addDoc, collection, doc } from "firebase/firestore";
 import { useState } from "react";
 import { db } from "../../API/firebase";
 import { useUser } from "../../hooks/useUser";
@@ -32,8 +32,8 @@ const Form = () => {
 
     const expenseWithFormatedDate = {
       ...expense,
-      //trocando o formato da data para que o firebase consiga interpretar e salvar no modo correto
-      date: Timestamp.fromDate(dayjs(expense.date).toDate()),
+      //trocando o formato da data para milisegundos, assim faciliando na hora das conversões
+      date: dayjs(expense.date).valueOf(),
     };
 
     await addExpense(expenseWithFormatedDate, userData.uid);
@@ -48,14 +48,6 @@ const Form = () => {
 
     setExpenseValue("0,00");
   };
-  const aux = dayjs(expense.date).toDate().toString();
-  console.log(
-    aux.slice(0, 16) + dayjs().format("hh:mm:ss") + aux.slice(24, aux.length),
-  );
-  console.log(new Date());
-  console.log(dayjs().format("hh:mm:ss"));
-
-  //TODO:verificar erro de timestamp
 
   const handleExpenseInputs = (ev) => {
     setExpense((prev) => ({
