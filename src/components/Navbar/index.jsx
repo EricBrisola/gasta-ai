@@ -30,7 +30,7 @@ const Navbar = () => {
         />
         <NavbarBtn
           textContent={"Mensal"}
-          path={"/last-thirty-days"}
+          path={"/last-month"}
           style={navButtonStyle}
         />
         <NavbarBtn

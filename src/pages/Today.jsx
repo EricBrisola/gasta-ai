@@ -69,10 +69,10 @@ export const Today = () => {
         "expenses",
       );
 
-      // Filtrar documentos pelo campo de identificação do usuário
+      // Filtrar os gastos que foram referentes ao dia
       const q = query(
         expenseCollection,
-        where("date", "==", dayjs().format("YYYY-MM-DD")),
+        where("date", "==", dayjs(dayjs().format("YYYY-MM-DD")).valueOf()),
       );
 
       // Buscar os documentos
@@ -103,8 +103,13 @@ export const Today = () => {
   };
 
   const setCurrentExpense = (currentExpense) => {
+    // converte a data de milisegundos para um formato que o input possa interpretar (YYYY-MM-DD)
+    const formatedDate = dayjs(dayjs(currentExpense.date).valueOf()).format(
+      "YYYY-MM-DD",
+    );
+
     // seta o gasto que quer alterar dentro dos inputs do modal
-    setEditedExpense(currentExpense);
+    setEditedExpense({ ...currentExpense, date: formatedDate });
     // seta o valor do gasto que quer alterar para o valor dentro do modal
     // tambem troca o ponto do valor para vírgula com intuito de ficar no sistema numerico br
     setExpenseValue(currentExpense.value.replace(".", ","));
@@ -119,19 +124,13 @@ export const Today = () => {
 
   const submitUpdatedExpense = async (ev) => {
     ev.preventDefault();
-    //troca de vírgula para ponto para quando salvar nao resultar em NaN
     const expenseWithValueFixed = {
-      title: editedExpense.title,
+      ...editedExpense,
+      //troca de vírgula para ponto para quando salvar nao resultar em NaN
       value: expenseValue.replace(",", "."),
-      category: editedExpense.category,
-      date: editedExpense.date,
+      //converte a data novamente para milisegundos para ser salvo no firebase
+      date: dayjs(editedExpense.date).valueOf(),
     };
-
-    //testar se funciona assim
-    // const expenseWithValueFixed = {
-    //   ...editedExpense,
-    //   value: expenseValue.replace(",", "."),
-    // };
 
     const expenseRef = doc(
       db,
