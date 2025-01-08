@@ -1,5 +1,13 @@
 import "./App.css";
-import { Login, SignUp, AddExpense, Today, LastWeek } from "./pages";
+import {
+  Login,
+  SignUp,
+  AddExpense,
+  Today,
+  LastWeek,
+  LastMonth,
+  AllExpenses,
+} from "./pages";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { Routes, Route } from "react-router-dom";
 
@@ -29,6 +37,22 @@ function App() {
         element={
           <ProtectedRoute>
             <LastWeek />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/last-month"
+        element={
+          <ProtectedRoute>
+            <LastMonth />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/all-expenses"
+        element={
+          <ProtectedRoute>
+            <AllExpenses />
           </ProtectedRoute>
         }
       />
