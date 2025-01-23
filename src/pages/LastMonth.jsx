@@ -12,6 +12,7 @@ import {
   deleteDoc,
   doc,
   updateDoc,
+  orderBy,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { db } from "../API/firebase";
@@ -23,7 +24,7 @@ import loadingAnimation from "../assets/loading_animation.json";
 import categoriesImgHashMap from "../assets/categoriesImgsHashMap";
 import EditForm from "../components/UpdateForm";
 import useModal from "../hooks/useModal";
-import { categories } from "../utils/categories";
+import useCategories from "../hooks/useCategories";
 
 export const LastMonth = () => {
   const [monthlyExpenses, setMonthlyExpenses] = useState([]);
@@ -38,6 +39,12 @@ export const LastMonth = () => {
   const { isLoading, startLoading, stopLoading } = useLoading();
   const { userData } = useUser();
   const { isModalOpen, openModal, closeModal } = useModal();
+  const {
+    categories,
+    cleanCategoriesFiltered,
+    getChosenCategories,
+    handleFilterChange,
+  } = useCategories();
 
   useEffect(() => {
     if (userData?.uid) getMonthlyExpenses();
@@ -158,11 +165,66 @@ export const LastMonth = () => {
     setExpenseValue(inputValue);
   };
 
+  const getExpensesFiltered = async () => {
+    const chosenCategories = getChosenCategories();
+
+    if (chosenCategories.length < 1) {
+      await getMonthlyExpenses();
+      return;
+    }
+
+    try {
+      startLoading();
+      const expenseCollection = collection(
+        db,
+        "users",
+        userData?.uid,
+        "expenses",
+      );
+
+      // Filtrar os gastos que foram referentes ao dia juntamente com as categorias
+      const q = query(
+        expenseCollection,
+        where("date", ">=", dayjs().startOf("month").valueOf()),
+        where("category", "in", chosenCategories),
+        orderBy("date", "desc"),
+      );
+
+      // Buscar os documentos
+      const querySnapshot = await getDocs(q);
+      if (querySnapshot) stopLoading();
+
+      setMonthlyExpenses(() => {
+        const newExpenses = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        return newExpenses;
+      });
+    } catch (error) {
+      //alert(`Erro: ${error}`);
+      console.log(`Erro: ${error}`);
+    } finally {
+      stopLoading();
+    }
+  };
+
+  const cleanAllFilters = async () => {
+    cleanCategoriesFiltered();
+
+    await getMonthlyExpenses();
+  };
+
   return (
     <main className="flex h-screen flex-col bg-[#E2DEE9]">
       <Navbar />
       <section className="flex flex-1">
-        <Sidebar />
+        <Sidebar
+          categories={categories}
+          filterExpenses={getExpensesFiltered}
+          cleanFilters={cleanAllFilters}
+          handleChange={handleFilterChange}
+        />
         <section className="flex flex-1 flex-col gap-3">
           <Header total={monthlyTotal} date={dayjs().format("DD/MM/YYYY")} />
           <article className="flex justify-center pb-7">
