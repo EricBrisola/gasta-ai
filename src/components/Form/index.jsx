@@ -3,9 +3,10 @@ import { addDoc, collection, doc } from "firebase/firestore";
 import { useState } from "react";
 import { db } from "../../API/firebase";
 import { useUser } from "../../hooks/useUser";
-import { categories } from "../../utils/categories";
+import useCategories from "../../hooks/useCategories";
 
 const Form = () => {
+  //TODO: impossibilitar de adicionar gasto de o valor for 0,00
   const [expenseValue, setExpenseValue] = useState("0,00");
   const [expense, setExpense] = useState({
     title: "",
@@ -14,6 +15,7 @@ const Form = () => {
     date: dayjs().format("YYYY-MM-DD"),
   });
   const { userData } = useUser();
+  const { categories } = useCategories();
 
   const addExpense = async (expense, userRef) => {
     try {
