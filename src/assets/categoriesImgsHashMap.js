@@ -8,7 +8,7 @@ import miscIcon from "./miscellaneous-icon.png";
 const categoriesImgHashMap = {
   food: foodIcon,
   transport: transportIcon,
-  enterteinment: enterteinmentIcon,
+  entertainment: enterteinmentIcon,
   home: homeIcon,
   health: healthIcon,
   miscellaneous: miscIcon,
