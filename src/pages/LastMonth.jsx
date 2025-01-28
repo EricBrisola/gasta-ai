@@ -202,8 +202,7 @@ export const LastMonth = () => {
         return newExpenses;
       });
     } catch (error) {
-      //alert(`Erro: ${error}`);
-      console.log(`Erro: ${error}`);
+      alert(`Erro: ${error}`);
     } finally {
       stopLoading();
     }
