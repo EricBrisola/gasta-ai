@@ -1,16 +1,21 @@
 import dayjs from "dayjs";
 
+const thisYear = dayjs().year()
+
 export const months = [
-    { month: "Janeiro", value: dayjs().startOf() },
-    { month: "Fevereiro", value: "02" },
-    { month: "Março", value: "03" },
-    { month: "Abril", value: "04" },
-    { month: "Maio", value: "05" },
-    { month: "Junho", value: "06" },
-    { month: "Julho", value: "07" },
-    { month: "Agosto", value: "08" },
-    { month: "Setembro", value: "09" },
-    { month: "Outubro", value: "10" },
-    { month: "Novembro", value: "11" },
-    { month: "Dezembro", value: "12" },
+    { month: "Todos", value: "none" },
+    { month: "Janeiro", value: dayjs(`${thisYear + ""}-01-01`).valueOf() },
+    { month: "Fevereiro", value: dayjs(`${thisYear + ""}-02-01`).valueOf() },
+    { month: "Março", value: dayjs(`${thisYear + ""}-03-01`).valueOf() },
+    { month: "Abril", value: dayjs(`${thisYear + ""}-04-01`).valueOf() },
+    { month: "Maio", value: dayjs(`${thisYear + ""}-05-01`).valueOf() },
+    { month: "Junho", value: dayjs(`${thisYear + ""}-06-01`).valueOf() },
+    { month: "Julho", value: dayjs(`${thisYear + ""}-07-01`).valueOf() },
+    { month: "Agosto", value: dayjs(`${thisYear + ""}-08-01`).valueOf() },
+    { month: "Setembro", value: dayjs(`${thisYear + ""}-09-01`).valueOf() },
+    { month: "Outubro", value: dayjs(`${thisYear + ""}-10-01`).valueOf() },
+    { month: "Novembro", value: dayjs(`${thisYear + ""}-11-01`).valueOf() },
+    { month: "Dezembro", value: dayjs(`${thisYear + ""}-12-01`).valueOf() },
 ];
+
+// date format YYYY-MM-DD
