@@ -144,7 +144,7 @@ const Form = () => {
             className="h-12 w-56 rounded border-[1px] border-[#645cff] bg-transparent p-3 outline-none focus:border-2"
             onChange={handleExpenseInputs}
             value={expense.date}
-            max={dayjs().format("YYYY-MM-DD")}
+            max={dayjs().endOf("year").format("YYYY-MM-DD")}
           />
         </div>
         <button className="rounded-md bg-[#645cff] p-2 text-white shadow-sm shadow-[#645cff]/20 duration-200 hover:shadow-lg hover:shadow-[#645cff]/40">
