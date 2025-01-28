@@ -12,6 +12,7 @@ import {
   deleteDoc,
   doc,
   updateDoc,
+  orderBy,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { db } from "../API/firebase";
@@ -23,7 +24,8 @@ import loadingAnimation from "../assets/loading_animation.json";
 import categoriesImgHashMap from "../assets/categoriesImgsHashMap";
 import EditForm from "../components/UpdateForm";
 import useModal from "../hooks/useModal";
-import { categories } from "../utils/categories";
+import { months } from "../utils/months";
+import useCategories from "../hooks/useCategories";
 
 export const AllExpenses = () => {
   //TODO: adicionar o filtro dos meses nessa pagina
@@ -36,9 +38,16 @@ export const AllExpenses = () => {
     date: "",
   });
   const [expenseValue, setExpenseValue] = useState("");
+  const [selectedMonth, setSelectedMonth] = useState("none");
   const { isLoading, startLoading, stopLoading } = useLoading();
   const { userData } = useUser();
   const { isModalOpen, openModal, closeModal } = useModal();
+  const {
+    categories,
+    cleanCategoriesFiltered,
+    getChosenCategories,
+    handleFilterChange,
+  } = useCategories();
 
   useEffect(() => {
     if (userData?.uid) getAllExpenses();
@@ -159,11 +168,115 @@ export const AllExpenses = () => {
     setExpenseValue(inputValue);
   };
 
+  const getExpensesFiltered = async () => {
+    const chosenCategories = getChosenCategories();
+
+    if (chosenCategories.length < 1 && selectedMonth === "none") {
+      await getAllExpenses();
+      return;
+    }
+    try {
+      startLoading();
+      const expenseCollection = collection(
+        db,
+        "users",
+        userData?.uid,
+        "expenses",
+      );
+
+      let q = query(
+        expenseCollection,
+        where("date", ">=", dayjs().startOf("year").valueOf()),
+        orderBy("date", "desc"),
+      );
+
+      // Filtrar todos os gastos que foram referentes ao dia juntamente com as categorias e o mes
+      if (selectedMonth !== "none" && chosenCategories.length >= 1) {
+        // +selectedMonth trasnforma ele el numero, para dar certo a conversão
+        q = query(
+          expenseCollection,
+          where("date", ">=", +selectedMonth),
+          where("date", "<=", dayjs(+selectedMonth).endOf("month").valueOf()),
+          where("category", "in", chosenCategories),
+          orderBy("date", "desc"),
+        );
+      }
+
+      if (selectedMonth === "none" && chosenCategories.length >= 1) {
+        q = query(
+          expenseCollection,
+          where("date", ">=", dayjs().startOf("year").valueOf()),
+          where("category", "in", chosenCategories),
+          orderBy("date", "desc"),
+        );
+      }
+
+      if (selectedMonth !== "none" && chosenCategories.length < 1) {
+        q = query(
+          expenseCollection,
+          where("date", ">=", +selectedMonth),
+          // isso pega o ultimo dia do mes
+          where("date", "<=", dayjs(+selectedMonth).endOf("month").valueOf()),
+          orderBy("date", "desc"),
+        );
+      }
+
+      // Buscar os documentos
+      const querySnapshot = await getDocs(q);
+      if (querySnapshot) stopLoading();
+
+      setAllExpenses(() => {
+        const newExpenses = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        return newExpenses;
+      });
+    } catch (error) {
+      alert(`Erro: ${error}`);
+    } finally {
+      stopLoading();
+    }
+  };
+
+  const cleanAllFilters = async () => {
+    cleanCategoriesFiltered();
+    setSelectedMonth("none");
+
+    await getAllExpenses();
+  };
+
+  const handleSelectChange = (ev) => {
+    setSelectedMonth(ev.target.value);
+  };
+
   return (
     <main className="flex h-screen flex-col bg-[#E2DEE9]">
       <Navbar />
       <section className="flex flex-1">
-        <Sidebar />
+        <Sidebar
+          categories={categories}
+          filterExpenses={getExpensesFiltered}
+          cleanFilters={cleanAllFilters}
+          handleChange={handleFilterChange}
+        >
+          <article className="flex flex-col items-center gap-2">
+            <p className="text-xl font-semibold">Meses</p>
+            <select
+              className="h-12 w-36 rounded border-[1px] border-[#645cff] bg-transparent p-2 outline-none focus:border-2"
+              value={selectedMonth}
+              onChange={handleSelectChange}
+            >
+              {months.map((month) => {
+                return (
+                  <option value={month.value} key={month.value}>
+                    {month.month}
+                  </option>
+                );
+              })}
+            </select>
+          </article>
+        </Sidebar>
         <section className="flex flex-1 flex-col gap-3">
           <Header total={expensesTotal} date={dayjs().format("DD/MM/YYYY")} />
           <article className="flex justify-center pb-7">
@@ -214,7 +327,7 @@ export const AllExpenses = () => {
             </article>
             <EditForm
               categories={categories}
-              maxDate={dayjs().format("YYYY-MM-DD")}
+              maxDate={dayjs().endOf("year").format("YYYY-MM-DD")}
               expense={editedExpense}
               handleExpenseInputs={handleExpenseInputs}
               handleExpenseValueChange={handleExpenseValueChange}
