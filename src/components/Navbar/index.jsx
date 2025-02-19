@@ -13,7 +13,7 @@ const Navbar = () => {
   return (
     <nav className="flex w-full bg-[#645cff] px-6 py-1">
       <NavbarBtn
-        textContent={"Expense manager"}
+        textContent={"Gasta ai"}
         path={"/add-expense"}
         style={"text-white text-2xl flex flex-1 tracking-wide"}
       />
