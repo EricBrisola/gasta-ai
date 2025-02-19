@@ -28,7 +28,6 @@ import { months } from "../utils/months";
 import useCategories from "../hooks/useCategories";
 
 export const AllExpenses = () => {
-  //TODO: adicionar o filtro dos meses nessa pagina
   const [allExpenses, setAllExpenses] = useState([]);
   const [expensesTotal, setExpensesTotal] = useState(0);
   const [editedExpense, setEditedExpense] = useState({
@@ -251,7 +250,7 @@ export const AllExpenses = () => {
   };
 
   return (
-    <main className="flex h-screen flex-col bg-[#E2DEE9]">
+    <main className="flex min-h-screen flex-col bg-[#E2DEE9]">
       <Navbar />
       <section className="flex flex-1">
         <Sidebar
@@ -278,9 +277,14 @@ export const AllExpenses = () => {
           </article>
         </Sidebar>
         <section className="flex flex-1 flex-col gap-3">
-          <Header total={expensesTotal} date={dayjs().format("DD/MM/YYYY")} />
-          <article className="flex justify-center pb-7">
-            <div className="flex w-full flex-wrap gap-6 px-9">
+          <Header
+            total={expensesTotal}
+            date={
+              `01/01/${dayjs().year()}` + " - " + dayjs().format("DD/MM/YYYY")
+            }
+          />
+          <article className="pb-7">
+            <div className="grid-cols-auto-fit mx-auto grid w-full gap-6 px-9">
               {isLoading ? (
                 <Modal>
                   <Animation animation={loadingAnimation} />

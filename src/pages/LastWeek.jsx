@@ -215,7 +215,7 @@ export const LastWeek = () => {
   };
 
   return (
-    <main className="flex h-screen flex-col bg-[#E2DEE9]">
+    <main className="flex min-h-screen flex-col bg-[#E2DEE9]">
       <Navbar />
       <section className="flex flex-1">
         <Sidebar
@@ -225,9 +225,12 @@ export const LastWeek = () => {
           handleChange={handleFilterChange}
         />
         <section className="flex flex-1 flex-col gap-3">
-          <Header total={weeklyTotal} date={dayjs().format("DD/MM/YYYY")} />
-          <article className="flex justify-center pb-7">
-            <div className="flex w-full flex-wrap gap-6 px-9">
+          <Header
+            total={weeklyTotal}
+            date={`${dayjs().startOf("week").format("DD/MM/YYYY")} - ${dayjs().format("DD/MM/YYYY")}`}
+          />
+          <article className="pb-7">
+            <div className="grid-cols-auto-fit mx-auto grid w-full gap-6 px-9">
               {isLoading ? (
                 <Modal>
                   <Animation animation={loadingAnimation} />
