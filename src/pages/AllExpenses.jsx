@@ -52,7 +52,7 @@ export const AllExpenses = () => {
     if (userData?.uid) getAllExpenses();
   }, [userData]);
 
-  //usado para atualizar os valores totais dos gastos diarios
+  // usado para atualizar os valores totais dos gastos diarios
   useEffect(() => {
     getExpensesTotal();
   }, [allExpenses]);
@@ -283,38 +283,36 @@ export const AllExpenses = () => {
               `01/01/${dayjs().year()}` + " - " + dayjs().format("DD/MM/YYYY")
             }
           />
-          <article className="pb-7">
-            <div className="grid-cols-auto-fit mx-auto grid w-full gap-6 px-9">
-              {isLoading ? (
-                <Modal>
-                  <Animation animation={loadingAnimation} />
-                </Modal>
-              ) : allExpenses.length >= 1 ? (
-                allExpenses.map((expense) => {
-                  return (
-                    <ExpenseCard
-                      key={expense.id}
-                      id={expense.id}
-                      title={expense.title}
-                      value={expense.value}
-                      categoryImg={categoriesImgHashMap[expense.category]}
-                      deleteExpense={() =>
-                        deleteExpense(expense.id, expense.title)
-                      }
-                      getCurrentExpense={() => {
-                        setCurrentExpense(expense);
-                        openModal();
-                      }}
-                    />
-                  );
-                })
-              ) : (
-                <p className="flex w-full justify-center text-2xl font-normal text-[#102a42]">
-                  Sem gastos registrados
-                </p>
-              )}
-            </div>
-          </article>
+          <div className="flex flex-wrap justify-center gap-6 p-7">
+            {isLoading ? (
+              <Modal>
+                <Animation animation={loadingAnimation} />
+              </Modal>
+            ) : allExpenses.length >= 1 ? (
+              allExpenses.map((expense) => {
+                return (
+                  <ExpenseCard
+                    key={expense.id}
+                    id={expense.id}
+                    title={expense.title}
+                    value={expense.value}
+                    categoryImg={categoriesImgHashMap[expense.category]}
+                    deleteExpense={() =>
+                      deleteExpense(expense.id, expense.title)
+                    }
+                    getCurrentExpense={() => {
+                      setCurrentExpense(expense);
+                      openModal();
+                    }}
+                  />
+                );
+              })
+            ) : (
+              <p className="flex w-full justify-center text-2xl font-normal text-[#102a42]">
+                Sem gastos registrados
+              </p>
+            )}
+          </div>
         </section>
       </section>
       {isModalOpen && (

@@ -229,38 +229,36 @@ export const LastWeek = () => {
             total={weeklyTotal}
             date={`${dayjs().startOf("week").format("DD/MM/YYYY")} - ${dayjs().format("DD/MM/YYYY")}`}
           />
-          <article className="pb-7">
-            <div className="grid-cols-auto-fit mx-auto grid w-full gap-6 px-9">
-              {isLoading ? (
-                <Modal>
-                  <Animation animation={loadingAnimation} />
-                </Modal>
-              ) : weeklyExpenses.length >= 1 ? (
-                weeklyExpenses.map((expense) => {
-                  return (
-                    <ExpenseCard
-                      key={expense.id}
-                      id={expense.id}
-                      title={expense.title}
-                      value={expense.value}
-                      categoryImg={categoriesImgHashMap[expense.category]}
-                      deleteExpense={() =>
-                        deleteExpense(expense.id, expense.title)
-                      }
-                      getCurrentExpense={() => {
-                        setCurrentExpense(expense);
-                        openModal();
-                      }}
-                    />
-                  );
-                })
-              ) : (
-                <p className="flex w-full justify-center text-2xl font-normal text-[#102a42]">
-                  Sem gastos registrados nos últimos 7 dias
-                </p>
-              )}
-            </div>
-          </article>
+          <div className="flex flex-wrap justify-center gap-6 p-7">
+            {isLoading ? (
+              <Modal>
+                <Animation animation={loadingAnimation} />
+              </Modal>
+            ) : weeklyExpenses.length >= 1 ? (
+              weeklyExpenses.map((expense) => {
+                return (
+                  <ExpenseCard
+                    key={expense.id}
+                    id={expense.id}
+                    title={expense.title}
+                    value={expense.value}
+                    categoryImg={categoriesImgHashMap[expense.category]}
+                    deleteExpense={() =>
+                      deleteExpense(expense.id, expense.title)
+                    }
+                    getCurrentExpense={() => {
+                      setCurrentExpense(expense);
+                      openModal();
+                    }}
+                  />
+                );
+              })
+            ) : (
+              <p className="flex w-full justify-center text-2xl font-normal text-[#102a42]">
+                Sem gastos registrados nesta semana
+              </p>
+            )}
+          </div>
         </section>
       </section>
       {isModalOpen && (
