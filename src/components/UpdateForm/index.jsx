@@ -9,8 +9,8 @@ const EditForm = ({
   updateExpense,
 }) => {
   return (
-    <form className="flex flex-col gap-6 px-2 py-1 text-black">
-      <section className="flex flex-row flex-wrap gap-4">
+    <form className="flex flex-col gap-6 py-1 text-black max-[425px]:items-center">
+      <section className="flex flex-row flex-wrap gap-4 max-[425px]:justify-center">
         <article className="space-y-4">
           <label
             htmlFor="new-expense-title-input"
@@ -81,7 +81,7 @@ const EditForm = ({
         </article>
       </section>
       <button
-        className="rounded-md bg-[#645cff] p-2 text-white shadow-sm shadow-[#645cff]/20 duration-200 hover:shadow-lg hover:shadow-[#645cff]/40"
+        className="rounded-md bg-[#645cff] p-2 text-white shadow-sm shadow-[#645cff]/20 duration-200 hover:shadow-lg hover:shadow-[#645cff]/40 max-[425px]:w-56"
         onClick={updateExpense}
       >
         Salvar

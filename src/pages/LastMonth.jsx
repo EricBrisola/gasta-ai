@@ -263,7 +263,7 @@ export const LastMonth = () => {
       </section>
       {isModalOpen && (
         <Modal>
-          <section className="flex flex-col rounded bg-[#F7F6FA] p-2">
+          <section className="flex flex-col rounded bg-[#F7F6FA] p-4 max-[425px]:m-5 max-[425px]:w-80 max-[425px]:p-2">
             <article className="flex w-full justify-end">
               <button
                 type="button"

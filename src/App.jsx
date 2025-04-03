@@ -7,6 +7,7 @@ import {
   LastWeek,
   LastMonth,
   AllExpenses,
+  ChangePassword,
 } from "./pages";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { Routes, Route } from "react-router-dom";
@@ -16,6 +17,7 @@ function App() {
     <Routes>
       <Route path="/sign-up" element={<SignUp />} />
       <Route path="/" element={<Login />} />
+      <Route path="/change-password" element={<ChangePassword />} />
       <Route
         path="/add-expense"
         element={

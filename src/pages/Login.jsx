@@ -29,6 +29,10 @@ export const Login = () => {
     redirectTo("/sign-up");
   };
 
+  const redirectToForgetPassword = () => {
+    redirectTo("/change-password");
+  };
+
   return (
     <main className="flex h-screen flex-1 items-center justify-center bg-[#E2DEE9] text-[#102a42]">
       <section className="flex w-80 flex-col items-center justify-center rounded-md bg-[#F7F6FA] shadow-lg max-[320px]:mx-5">
@@ -61,7 +65,10 @@ export const Login = () => {
               onChange={handleChange}
             />
           </label>
-          <button className="text-left text-sm font-bold text-[#645cff]">
+          <button
+            className="text-left text-sm font-bold text-[#645cff]"
+            onClick={redirectToForgetPassword}
+          >
             Esqueceu a senha ?
           </button>
           <button className="w-56 rounded-md bg-[#645cff] p-2 text-white shadow-sm shadow-[#645cff]/20 duration-200 hover:shadow-lg hover:shadow-[#645cff]/40">
