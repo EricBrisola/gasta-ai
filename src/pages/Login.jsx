@@ -6,6 +6,8 @@ import loadingAnimation from "../assets/loading_animation.json";
 import Modal from "../components/Modal";
 import Animation from "../components/Animation";
 import { useUser } from "../hooks/useUser";
+import useModal from "../hooks/useModal";
+import { ChangePassword } from "../components/ChangePassword";
 
 export const Login = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +15,7 @@ export const Login = () => {
     password: "",
   });
   const { isLoading, startLoading, stopLoading } = useLoading();
+  const { isModalOpen, openModal, closeModal } = useModal();
 
   const { loginUser, loginWithGoogle } = useUser();
 
@@ -27,10 +30,6 @@ export const Login = () => {
 
   const redirectToSignUpPage = () => {
     redirectTo("/sign-up");
-  };
-
-  const redirectToForgetPassword = () => {
-    redirectTo("/change-password");
   };
 
   return (
@@ -67,7 +66,8 @@ export const Login = () => {
           </label>
           <button
             className="text-left text-sm font-bold text-[#645cff]"
-            onClick={redirectToForgetPassword}
+            onClick={openModal}
+            type="button"
           >
             Esqueceu a senha ?
           </button>
@@ -104,6 +104,11 @@ export const Login = () => {
       {isLoading && (
         <Modal>
           <Animation animation={loadingAnimation} />
+        </Modal>
+      )}
+      {isModalOpen && (
+        <Modal>
+          <ChangePassword closeModal={closeModal} />
         </Modal>
       )}
     </main>
