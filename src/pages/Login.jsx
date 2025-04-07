@@ -6,6 +6,8 @@ import loadingAnimation from "../assets/loading_animation.json";
 import Modal from "../components/Modal";
 import Animation from "../components/Animation";
 import { useUser } from "../hooks/useUser";
+import useModal from "../hooks/useModal";
+import { ChangePassword } from "../components/ChangePassword";
 
 export const Login = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +15,7 @@ export const Login = () => {
     password: "",
   });
   const { isLoading, startLoading, stopLoading } = useLoading();
+  const { isModalOpen, openModal, closeModal } = useModal();
 
   const { loginUser, loginWithGoogle } = useUser();
 
@@ -61,7 +64,11 @@ export const Login = () => {
               onChange={handleChange}
             />
           </label>
-          <button className="text-left text-sm font-bold text-[#645cff]">
+          <button
+            className="text-left text-sm font-bold text-[#645cff]"
+            onClick={openModal}
+            type="button"
+          >
             Esqueceu a senha ?
           </button>
           <button className="w-56 rounded-md bg-[#645cff] p-2 text-white shadow-sm shadow-[#645cff]/20 duration-200 hover:shadow-lg hover:shadow-[#645cff]/40">
@@ -97,6 +104,11 @@ export const Login = () => {
       {isLoading && (
         <Modal>
           <Animation animation={loadingAnimation} />
+        </Modal>
+      )}
+      {isModalOpen && (
+        <Modal>
+          <ChangePassword closeModal={closeModal} />
         </Modal>
       )}
     </main>

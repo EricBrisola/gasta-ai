@@ -10,7 +10,7 @@ const Navbar = () => {
   const { userData, logoutUser } = useUser();
 
   const navButtonStyle =
-    "text-white text-base flex flex-2 items-center tracking-wide hover:bg-[#cfe8ff] duration-200 p-2 rounded-md hover:text-[#617d98] max-[425px]:rounded-none max-[425px]:justify-center max-[425px]:w-full max-[425px]:bg-[#5148cc] max-[425px]:rounded-md";
+    "text-white text-base flex flex-2 items-center tracking-wide hover:bg-[#cfe8ff] duration-200 p-2 rounded-md hover:text-[#617d98] max-[425px]:rounded-none max-[425px]:justify-center max-[425px]:bg-[#5148cc] max-[425px]:rounded-md";
 
   const userNameStyle =
     "text-white text-base flex flex-2 items-center tracking-wide p-2 rounded-md max-[425px]:self-center max-[425px]:text-lg";
