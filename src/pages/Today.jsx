@@ -25,6 +25,7 @@ import categoriesImgHashMap from "../assets/categoriesImgsHashMap";
 import EditForm from "../components/UpdateForm";
 import useModal from "../hooks/useModal";
 import useCategories from "../hooks/useCategories";
+import { toaster } from "../utils/toaster";
 
 export const Today = () => {
   const [dailyExpenses, setDailyExpenses] = useState([]);
@@ -46,6 +47,7 @@ export const Today = () => {
     handleFilterChange,
     getChosenCategories,
   } = useCategories();
+  const { sucessToast, errorToast } = toaster();
 
   useEffect(() => {
     if (userData?.uid) getDailyExpenses();
@@ -95,7 +97,7 @@ export const Today = () => {
         return newExpenses;
       });
     } catch (error) {
-      alert(`Erro: ${error}`);
+      errorToast(`Erro: ${error}`);
     } finally {
       stopLoading();
     }
@@ -106,7 +108,7 @@ export const Today = () => {
       await deleteDoc(doc(db, "users", userData.uid, "expenses", id));
       await getDailyExpenses();
     } catch (error) {
-      alert(`Erro: ${error}\n Ao excluir o gasto: ${title}`);
+      errorToast(`Erro: ${error}\n Ao excluir o gasto: ${title}`);
     }
   };
 
@@ -150,11 +152,11 @@ export const Today = () => {
 
     try {
       await updateDoc(expenseRef, expenseWithValueFixed);
-      alert("Gasto atualizado com sucesso!");
+      sucessToast("Gasto atualizado com sucesso!");
       closeModal();
       await getDailyExpenses();
     } catch (error) {
-      alert(`Erro ao atualizar gasto: ${error}`);
+      errorToast(`Erro ao atualizar gasto: ${error}`);
     }
   };
 
@@ -202,7 +204,7 @@ export const Today = () => {
         return newExpenses;
       });
     } catch (error) {
-      alert(`Erro: ${error}`);
+      errorToast(`Erro: ${error}`);
     } finally {
       stopLoading();
     }

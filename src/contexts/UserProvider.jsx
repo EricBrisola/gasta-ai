@@ -10,6 +10,7 @@ import {
   signOut,
 } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
+import { toaster } from "../utils/toaster";
 
 export const UserContext = createContext();
 
@@ -20,6 +21,7 @@ const UserProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   const redirectTo = useRedirect();
+  const { errorToast } = toaster();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
@@ -49,7 +51,7 @@ const UserProvider = ({ children }) => {
     if (docSnap.exists()) {
       setUserData(docSnap.data());
     } else {
-      alert("Usuário não encontrado");
+      errorToast("Usuário não encontrado");
     }
   };
 
@@ -71,7 +73,7 @@ const UserProvider = ({ children }) => {
     } catch (error) {
       const errorCode = error.code;
       const errorMessage = error.message;
-      alert(`Erro: ${errorCode}\n${errorMessage}`);
+      errorToast(`Erro: ${errorCode}\n${errorMessage}`);
       stopLoading();
     }
   };
@@ -103,7 +105,7 @@ const UserProvider = ({ children }) => {
         redirectTo("/add-expense");
       }
     } catch (error) {
-      alert(`Erro: ${error.message}`);
+      errorToast(`Erro: ${error.message}`);
       stopLoading();
     }
   };
@@ -149,7 +151,7 @@ const UserProvider = ({ children }) => {
         loginUser(ev, startLoading, stopLoading, formData);
       }
     } catch (error) {
-      alert(error.message);
+      errorToast(error.message);
       stopLoading();
     }
   };
@@ -158,7 +160,7 @@ const UserProvider = ({ children }) => {
     try {
       await signOut(auth);
     } catch (error) {
-      alert(`Erro ao deslogar: ${error}`);
+      errorToast(`Erro ao deslogar: ${error}`);
     }
   };
 

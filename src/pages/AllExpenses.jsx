@@ -26,6 +26,7 @@ import EditForm from "../components/UpdateForm";
 import useModal from "../hooks/useModal";
 import { months } from "../utils/months";
 import useCategories from "../hooks/useCategories";
+import { toaster } from "../utils/toaster";
 
 export const AllExpenses = () => {
   const [allExpenses, setAllExpenses] = useState([]);
@@ -47,6 +48,7 @@ export const AllExpenses = () => {
     getChosenCategories,
     handleFilterChange,
   } = useCategories();
+  const { sucessToast, errorToast } = toaster();
 
   useEffect(() => {
     if (userData?.uid) getAllExpenses();
@@ -96,7 +98,7 @@ export const AllExpenses = () => {
         return newExpenses;
       });
     } catch (error) {
-      alert(`Erro: ${error}`);
+      errorToast(`Erro: ${error}`);
     } finally {
       stopLoading();
     }
@@ -107,7 +109,7 @@ export const AllExpenses = () => {
       await deleteDoc(doc(db, "users", userData.uid, "expenses", id));
       await getAllExpenses();
     } catch (error) {
-      alert(`Erro: ${error}\n Ao excluir o gasto: ${title}`);
+      errorToast(`Erro: ${error}\n Ao excluir o gasto: ${title}`);
     }
   };
 
@@ -152,11 +154,11 @@ export const AllExpenses = () => {
 
     try {
       await updateDoc(expenseRef, expenseWithValueFixed);
-      alert("Gasto atualizado com sucesso!");
+      sucessToast("Gasto atualizado com sucesso!");
       closeModal();
       await getAllExpenses();
     } catch (error) {
-      alert(`Erro ao atualizar gasto: ${error}`);
+      errorToast(`Erro ao atualizar gasto: ${error}`);
     }
   };
 
@@ -232,7 +234,7 @@ export const AllExpenses = () => {
         return newExpenses;
       });
     } catch (error) {
-      alert(`Erro: ${error}`);
+      errorToast(`Erro: ${error}`);
     } finally {
       stopLoading();
     }

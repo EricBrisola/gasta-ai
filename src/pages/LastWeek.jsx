@@ -25,6 +25,7 @@ import categoriesImgHashMap from "../assets/categoriesImgsHashMap";
 import EditForm from "../components/UpdateForm";
 import useModal from "../hooks/useModal";
 import useCategories from "../hooks/useCategories";
+import { toaster } from "../utils/toaster";
 
 export const LastWeek = () => {
   const [weeklyExpenses, setWeeklyExpenses] = useState([]);
@@ -45,6 +46,7 @@ export const LastWeek = () => {
     getChosenCategories,
     handleFilterChange,
   } = useCategories();
+  const { sucessToast, errorToast } = toaster();
 
   useEffect(() => {
     if (userData?.uid) getWeeklyExpenses();
@@ -94,7 +96,7 @@ export const LastWeek = () => {
         return newExpenses;
       });
     } catch (error) {
-      alert(`Erro: ${error}`);
+      errorToast(`Erro: ${error}`);
     } finally {
       stopLoading();
     }
@@ -105,7 +107,7 @@ export const LastWeek = () => {
       await deleteDoc(doc(db, "users", userData.uid, "expenses", id));
       await getWeeklyExpenses();
     } catch (error) {
-      alert(`Erro: ${error}\n Ao excluir o gasto: ${title}`);
+      errorToast(`Erro: ${error}\n Ao excluir o gasto: ${title}`);
     }
   };
 
@@ -150,11 +152,11 @@ export const LastWeek = () => {
 
     try {
       await updateDoc(expenseRef, expenseWithValueFixed);
-      alert("Gasto atualizado com sucesso!");
+      sucessToast("Gasto atualizado com sucesso!");
       closeModal();
       await getWeeklyExpenses();
     } catch (error) {
-      alert(`Erro ao atualizar gasto: ${error}`);
+      errorToast(`Erro ao atualizar gasto: ${error}`);
     }
   };
 
@@ -202,7 +204,7 @@ export const LastWeek = () => {
         return newExpenses;
       });
     } catch (error) {
-      alert(`Erro: ${error}`);
+      errorToast(`Erro: ${error}`);
     } finally {
       stopLoading();
     }

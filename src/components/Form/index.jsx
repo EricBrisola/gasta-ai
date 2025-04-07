@@ -4,6 +4,7 @@ import { useState } from "react";
 import { db } from "../../API/firebase";
 import { useUser } from "../../hooks/useUser";
 import useCategories from "../../hooks/useCategories";
+import { toaster } from "../../utils/toaster";
 
 const Form = () => {
   //TODO: impossibilitar de adicionar gasto de o valor for 0,00
@@ -16,6 +17,7 @@ const Form = () => {
   });
   const { userData } = useUser();
   const { categories } = useCategories();
+  const { sucessToast, errorToast } = toaster();
 
   const addExpense = async (expense, userRef) => {
     try {
@@ -23,9 +25,9 @@ const Form = () => {
         ...expense,
         value: expenseValue.replace(",", "."),
       });
-      alert("adicionado com sucesso!");
+      sucessToast("adicionado com sucesso!");
     } catch (error) {
-      alert(`Erro ao criar gasto: ${error}`);
+      errorToast(`Erro ao criar gasto: ${error}`);
     }
   };
 
