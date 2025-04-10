@@ -7,7 +7,6 @@ import useCategories from "../../hooks/useCategories";
 import { toaster } from "../../utils/toaster";
 
 const Form = () => {
-  //TODO: impossibilitar de adicionar gasto de o valor for 0,00
   const [expenseValue, setExpenseValue] = useState("0,00");
   const [expense, setExpense] = useState({
     title: "",
@@ -33,6 +32,11 @@ const Form = () => {
 
   const handleSubmit = async (ev) => {
     ev.preventDefault();
+
+    if (expenseValue === "0,00") {
+      errorToast("Insira um valor válido!");
+      return;
+    }
 
     const expenseWithFormatedDate = {
       ...expense,

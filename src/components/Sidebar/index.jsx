@@ -9,6 +9,7 @@ const Sidebar = ({
   cleanFilters,
   filterExpenses,
   handleChange,
+  page,
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -16,7 +17,7 @@ const Sidebar = ({
     <aside className="flex items-center">
       <button
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        className="absolute top-96 min-[426px]:hidden"
+        className="fixed top-1/2 min-[426px]:hidden"
       >
         {!isSidebarOpen && <ArrowRight size={28} color="#645cff" />}
       </button>
@@ -70,7 +71,7 @@ const Sidebar = ({
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: -250, opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="absolute top-48 flex flex-row-reverse"
+            className={`fixed ${page} flex flex-row-reverse`}
           >
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}

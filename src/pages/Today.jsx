@@ -26,6 +26,7 @@ import EditForm from "../components/UpdateForm";
 import useModal from "../hooks/useModal";
 import useCategories from "../hooks/useCategories";
 import { toaster } from "../utils/toaster";
+import sidebarSizes from "../utils/sidebarPageSizes";
 
 export const Today = () => {
   const [dailyExpenses, setDailyExpenses] = useState([]);
@@ -171,7 +172,7 @@ export const Today = () => {
     const chosenCategories = getChosenCategories();
 
     if (chosenCategories.length < 1) {
-      await getDailyExpenses();
+      errorToast("Filtros vazios");
       return;
     }
 
@@ -219,16 +220,17 @@ export const Today = () => {
   return (
     <main className="flex min-h-screen flex-col bg-[#E2DEE9]">
       <Navbar />
-      <section className="flex flex-1">
+      <section className="flex flex-1 max-[425px]:pt-10">
         <Sidebar
           categories={categories}
           filterExpenses={getExpensesFiltered}
           cleanFilters={cleanAllFilters}
           handleChange={handleFilterChange}
+          page={sidebarSizes.smallSideBar}
         />
         <section className="flex flex-1 flex-col gap-3">
           <Header total={dailyTotal} date={dayjs().format("DD/MM/YYYY")} />
-          <div className="flex flex-wrap justify-center gap-6 p-7">
+          <div className="flex flex-wrap justify-center gap-6 px-7 py-4 max-[425px]:px-2 max-[425px]:py-4 max-[320px]:px-0">
             {isLoading ? (
               <Modal>
                 <Animation animation={loadingAnimation} />

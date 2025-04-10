@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 const Header = ({ total, date }) => {
   return (
-    <header className="flex justify-center py-4">
+    <header className="flex justify-center pt-4">
       <article className="flex flex-col items-center gap-3">
         <h1 className="text-3xl leading-none tracking-widest text-[#102a42] max-[425px]:text-2xl max-[320px]:text-xl">
           {date}
