@@ -13,6 +13,9 @@ export const toaster = () => {
       progress: undefined,
       theme: "colored",
       transition: Zoom,
+      style: {
+        width: '320px'
+      }
     });
   };
 
@@ -27,6 +30,9 @@ export const toaster = () => {
       progress: undefined,
       theme: "colored",
       transition: Zoom,
+      style: {
+        width: '320px'
+      }
     });
   };
   return { sucessToast, errorToast };
