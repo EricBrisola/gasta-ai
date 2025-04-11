@@ -1,17 +1,21 @@
 import { useState } from "react";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "../../API/firebase";
+import { toaster } from "../../utils/toaster";
 
 export const ChangePassword = ({ closeModal }) => {
   const [email, setEmail] = useState("");
+  const { sucessToast, errorToast } = toaster();
 
   const handleSubmit = async (ev) => {
     ev.preventDefault();
     try {
       await sendPasswordResetEmail(auth, email);
-      alert(`Email de redefinição de senha enviado para ${email}`);
+      sucessToast(`Email de redefinição de senha enviado para ${email}`);
     } catch (error) {
-      alert(`Erro ao tentar enviar o email de redefinição de senha: ${error}`);
+      errorToast(
+        `Erro ao tentar enviar o email de redefinição de senha: ${error}`,
+      );
     } finally {
       setEmail("");
       closeModal();
