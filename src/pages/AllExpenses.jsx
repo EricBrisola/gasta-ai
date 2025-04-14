@@ -285,7 +285,9 @@ export const AllExpenses = () => {
           <Header
             total={expensesTotal}
             date={
-              `01/01/${dayjs().year()}` + " - " + dayjs().format("DD/MM/YYYY")
+              `01/01/${dayjs().year()}` +
+              " - " +
+              dayjs().endOf("year").format("DD/MM/YYYY")
             }
           />
           <div className="flex flex-wrap justify-center gap-6 px-7 py-4 max-[430px]:px-1 max-[430px]:py-4 max-[320px]:px-0">

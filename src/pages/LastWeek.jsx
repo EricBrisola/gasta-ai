@@ -83,6 +83,7 @@ export const LastWeek = () => {
       const q = query(
         expenseCollection,
         where("date", ">=", dayjs().startOf("week").valueOf()),
+        where("date", "<=", dayjs().endOf("week").valueOf()),
       );
 
       // Buscar os documentos
@@ -189,6 +190,7 @@ export const LastWeek = () => {
       const q = query(
         expenseCollection,
         where("date", ">=", dayjs().startOf("week").valueOf()),
+        where("date", "<=", dayjs().endOf("week").valueOf()),
         where("category", "in", chosenCategories),
         orderBy("date", "desc"),
       );
@@ -231,7 +233,7 @@ export const LastWeek = () => {
         <section className="flex flex-1 flex-col gap-3">
           <Header
             total={weeklyTotal}
-            date={`${dayjs().startOf("week").format("DD/MM/YYYY")} - ${dayjs().format("DD/MM/YYYY")}`}
+            date={`${dayjs().startOf("week").format("DD/MM/YYYY")} - ${dayjs().endOf("week").format("DD/MM/YYYY")}`}
           />
           <div className="flex flex-wrap justify-center gap-6 px-7 py-4 max-[430px]:px-1 max-[430px]:py-4 max-[320px]:px-0">
             {isLoading ? (
