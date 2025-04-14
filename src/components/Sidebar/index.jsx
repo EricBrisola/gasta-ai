@@ -17,11 +17,11 @@ const Sidebar = ({
     <aside className="flex items-center">
       <button
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        className="fixed top-1/2 min-[426px]:hidden"
+        className="fixed top-1/2 min-[430px]:hidden"
       >
-        {!isSidebarOpen && <ArrowRight size={28} color="#645cff" />}
+        {!isSidebarOpen && <ArrowRight size={28} className="text-[#5148cc]" />}
       </button>
-      <article className="flex flex-col gap-5 rounded-br-md rounded-tr-md bg-[#F7F6FA] p-4 py-5 text-black shadow-md max-[425px]:hidden">
+      <article className="flex flex-col gap-5 rounded-br-md rounded-tr-md bg-[#F7F6FA] p-4 py-5 text-black shadow-md max-[430px]:hidden">
         {children}
         <article className="flex flex-col items-center gap-3">
           <p className="text-xl font-semibold">Categorias</p>
@@ -63,7 +63,7 @@ const Sidebar = ({
         </article>
       </article>
 
-      {/* {menu mobile para telas de 425px ou menos} */}
+      {/* {menu mobile para telas de 430px ou menos} */}
       <AnimatePresence>
         {isSidebarOpen && (
           <motion.article
@@ -75,9 +75,11 @@ const Sidebar = ({
           >
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="min-[426px]:hidden"
+              className="min-[430px]:hidden"
             >
-              {isSidebarOpen && <ArrowLeft size={28} color="#645cff" />}
+              {isSidebarOpen && (
+                <ArrowLeft size={28} className="text-[#5148cc]" />
+              )}
             </button>
             <article className="flex flex-col gap-5 rounded-br-md rounded-tr-md bg-[#F7F6FA] p-4 py-5 text-black shadow-md">
               {children}

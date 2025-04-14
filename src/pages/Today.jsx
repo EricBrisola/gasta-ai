@@ -220,7 +220,7 @@ export const Today = () => {
   return (
     <main className="flex min-h-screen flex-col bg-[#E2DEE9]">
       <Navbar />
-      <section className="flex flex-1 max-[425px]:pt-10">
+      <section className="flex flex-1 max-[430px]:pt-10">
         <Sidebar
           categories={categories}
           filterExpenses={getExpensesFiltered}
@@ -230,7 +230,7 @@ export const Today = () => {
         />
         <section className="flex flex-1 flex-col gap-3">
           <Header total={dailyTotal} date={dayjs().format("DD/MM/YYYY")} />
-          <div className="flex flex-wrap justify-center gap-6 px-7 py-4 max-[425px]:px-2 max-[425px]:py-4 max-[320px]:px-0">
+          <div className="flex flex-wrap justify-center gap-6 px-7 py-4 max-[430px]:px-1 max-[430px]:py-4 max-[320px]:px-0">
             {isLoading ? (
               <Modal>
                 <Animation animation={loadingAnimation} />
@@ -264,7 +264,7 @@ export const Today = () => {
       </section>
       {isModalOpen && (
         <Modal>
-          <section className="flex flex-col rounded bg-[#F7F6FA] p-4 max-[425px]:m-5 max-[425px]:w-80 max-[425px]:p-2">
+          <section className="flex flex-col rounded bg-[#F7F6FA] p-4 max-[430px]:m-5 max-[430px]:w-80 max-[430px]:p-2">
             <article className="flex w-full justify-end">
               <button
                 type="button"
