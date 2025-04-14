@@ -10,13 +10,13 @@ const Navbar = () => {
   const { userData, logoutUser } = useUser();
 
   const navButtonStyle =
-    "text-white text-base flex flex-2 items-center tracking-wide hover:bg-[#cfe8ff] duration-200 p-2 rounded-md hover:text-[#617d98] max-[425px]:rounded-none max-[425px]:justify-center max-[425px]:bg-[#5148cc] max-[425px]:rounded-md";
+    "text-white text-base flex flex-2 items-center tracking-wide hover:bg-[#cfe8ff] duration-200 p-2 rounded-md hover:text-[#617d98] max-[430px]:rounded-none max-[430px]:justify-center max-[430px]:bg-[#5148cc] max-[430px]:rounded-md";
 
   const userNameStyle =
-    "text-white text-base flex flex-2 items-center tracking-wide p-2 rounded-md max-[425px]:self-center max-[425px]:text-lg";
+    "text-white text-base flex flex-2 items-center tracking-wide p-2 rounded-md max-[430px]:self-center max-[430px]:text-lg";
 
   return (
-    <nav className="flex w-full bg-[#645cff] px-6 py-1 max-[425px]:fixed max-[425px]:justify-between">
+    <nav className="flex w-full bg-[#645cff] px-6 py-1 max-[430px]:fixed max-[430px]:justify-between">
       <NavbarBtn
         textContent={"Gasta ai"}
         path={"/add-expense"}
@@ -27,7 +27,7 @@ const Navbar = () => {
 
       <button
         onClick={() => setIsMenuOpen(!isMenuOpen)}
-        className="pt-1 min-[426px]:hidden"
+        className="pt-1 min-[430px]:hidden"
       >
         {isMenuOpen ? (
           <X size={28} color="#fff" />
@@ -36,7 +36,7 @@ const Navbar = () => {
         )}
       </button>
 
-      <article className="flex flex-1 justify-center gap-6 max-md:gap-3 max-[425px]:hidden">
+      <article className="flex flex-1 justify-center gap-6 max-md:gap-3 max-[430px]:hidden">
         <NavbarBtn
           textContent={"Hoje"}
           path={"/today"}
@@ -58,7 +58,7 @@ const Navbar = () => {
           style={navButtonStyle}
         />
       </article>
-      <article className="flex flex-1 justify-end max-lg:flex-none max-[425px]:hidden">
+      <article className="flex flex-1 justify-end max-lg:flex-none max-[430px]:hidden">
         <p className={userNameStyle}>
           {userData?.name[0].toUpperCase() +
             userData?.name.slice(1, userData?.name.length) || "Carregando..."}

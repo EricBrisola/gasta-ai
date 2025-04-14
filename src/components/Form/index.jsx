@@ -87,7 +87,10 @@ const Form = () => {
 
   return (
     <article className="flex w-80 items-center justify-center rounded-md bg-[#F7F6FA] shadow-lg max-[320px]:w-72">
-      <form onSubmit={handleSubmit} className="flex flex-col gap-6 py-6">
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col gap-6 py-6 max-[320px]:gap-2"
+      >
         <label
           htmlFor="new-expense-title-input"
           className="flex flex-col gap-4"
