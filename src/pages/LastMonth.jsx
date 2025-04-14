@@ -83,6 +83,7 @@ export const LastMonth = () => {
       const q = query(
         expenseCollection,
         where("date", ">=", dayjs().startOf("month").valueOf()),
+        where("date", "<=", dayjs().endOf("month").valueOf()),
       );
 
       // Buscar os documentos
@@ -189,6 +190,7 @@ export const LastMonth = () => {
       const q = query(
         expenseCollection,
         where("date", ">=", dayjs().startOf("month").valueOf()),
+        where("date", "<=", dayjs().endOf("month").valueOf()),
         where("category", "in", chosenCategories),
         orderBy("date", "desc"),
       );
@@ -231,7 +233,7 @@ export const LastMonth = () => {
         <section className="flex flex-1 flex-col gap-3">
           <Header
             total={monthlyTotal}
-            date={`01/0${dayjs().month() + 1}/${dayjs().year()} - ${dayjs().format("DD/MM/YYYY")}`}
+            date={`01/0${dayjs().month() + 1}/${dayjs().year()} - ${dayjs().endOf("month").format("DD/MM/YYYY")}`}
           />
           <div className="flex flex-wrap justify-center gap-6 px-7 py-4 max-[430px]:px-1 max-[430px]:py-4 max-[320px]:px-0">
             {isLoading ? (
