@@ -27,7 +27,6 @@ import useModal from "../hooks/useModal";
 import { months } from "../utils/months";
 import useCategories from "../hooks/useCategories";
 import { toaster } from "../utils/toaster";
-import sidebarSizes from "../utils/sidebarPageSizes";
 
 export const AllExpenses = () => {
   const [allExpenses, setAllExpenses] = useState([]);
@@ -262,7 +261,6 @@ export const AllExpenses = () => {
           filterExpenses={getExpensesFiltered}
           cleanFilters={cleanAllFilters}
           handleChange={handleFilterChange}
-          page={sidebarSizes.bigSidebar}
         >
           <article className="flex flex-col items-center gap-2">
             <p className="text-xl font-semibold">Meses</p>
