@@ -2,9 +2,11 @@ import { createContext, useEffect, useState } from "react";
 import useRedirect from "../hooks/useRedirect";
 import { auth, db } from "../API/firebase";
 import {
+  browserLocalPersistence,
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
   onAuthStateChanged,
+  setPersistence,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
@@ -24,10 +26,10 @@ const UserProvider = ({ children }) => {
   const { errorToast } = toaster();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         setUser(firebaseUser);
-        getUserData(firebaseUser.uid); // Faz o fetch dos dados do usuário
+        await getUserData(firebaseUser.uid); // Faz o fetch dos dados do usuário
       } else {
         setUser(null);
         setUserData(null);
@@ -38,11 +40,11 @@ const UserProvider = ({ children }) => {
     return () => unsubscribe();
   }, []);
 
-  useEffect(() => {
-    if (user) {
-      getUserData(user?.uid);
-    }
-  }, [user]);
+  // useEffect(() => {
+  //   if (user) {
+  //     getUserData(user?.uid);
+  //   }
+  // }, [user]);
 
   const getUserData = async (id) => {
     //id é o nome/id do documento que voce quer receber
@@ -61,6 +63,7 @@ const UserProvider = ({ children }) => {
 
     try {
       startLoading();
+      await setPersistence(auth, browserLocalPersistence);
       const newUser = await signInWithEmailAndPassword(
         auth,
         formData.email,
@@ -74,14 +77,15 @@ const UserProvider = ({ children }) => {
       const errorCode = error.code;
       const errorMessage = error.message;
       errorToast(`Erro: ${errorCode}\n${errorMessage}`);
+    } finally {
       stopLoading();
     }
   };
 
   const loginWithGoogle = async (startLoading, stopLoading) => {
-    //startLoading();
     const provider = new GoogleAuthProvider();
     try {
+      await setPersistence(auth, browserLocalPersistence);
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
@@ -106,15 +110,16 @@ const UserProvider = ({ children }) => {
       }
     } catch (error) {
       errorToast(`Erro: ${error.message}`);
+    } finally {
       stopLoading();
     }
   };
 
   const signupUser = async (ev, startLoading, formData, stopLoading) => {
     ev.preventDefault();
-    startLoading();
 
     try {
+      startLoading();
       if (formData.password !== formData.passwordConfirm) {
         throw new Error("Confirme sua senha corretamente!");
       }
@@ -148,16 +153,19 @@ const UserProvider = ({ children }) => {
       await setDoc(doc(db, "users", userUid), docData);
 
       if (newUser) {
-        loginUser(ev, startLoading, stopLoading, formData);
+        redirectTo("/add-expense");
+        //loginUser(ev, startLoading, stopLoading, formData);
       }
     } catch (error) {
       errorToast(error.message);
+    } finally {
       stopLoading();
     }
   };
 
   const logoutUser = async () => {
     try {
+      setUser(null);
       await signOut(auth);
     } catch (error) {
       errorToast(`Erro ao deslogar: ${error}`);

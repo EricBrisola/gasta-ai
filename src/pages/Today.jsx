@@ -26,7 +26,6 @@ import EditForm from "../components/UpdateForm";
 import useModal from "../hooks/useModal";
 import useCategories from "../hooks/useCategories";
 import { toaster } from "../utils/toaster";
-import sidebarSizes from "../utils/sidebarPageSizes";
 
 export const Today = () => {
   const [dailyExpenses, setDailyExpenses] = useState([]);
@@ -226,7 +225,6 @@ export const Today = () => {
           filterExpenses={getExpensesFiltered}
           cleanFilters={cleanAllFilters}
           handleChange={handleFilterChange}
-          page={sidebarSizes.smallSideBar}
         />
         <section className="flex flex-1 flex-col gap-3">
           <Header total={dailyTotal} date={dayjs().format("DD/MM/YYYY")} />

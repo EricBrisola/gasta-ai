@@ -26,7 +26,6 @@ import EditForm from "../components/UpdateForm";
 import useModal from "../hooks/useModal";
 import useCategories from "../hooks/useCategories";
 import { toaster } from "../utils/toaster";
-import sidebarSizes from "../utils/sidebarPageSizes";
 
 export const LastWeek = () => {
   const [weeklyExpenses, setWeeklyExpenses] = useState([]);
@@ -228,7 +227,6 @@ export const LastWeek = () => {
           filterExpenses={getExpensesFiltered}
           cleanFilters={cleanAllFilters}
           handleChange={handleFilterChange}
-          page={sidebarSizes.smallSideBar}
         />
         <section className="flex flex-1 flex-col gap-3">
           <Header
