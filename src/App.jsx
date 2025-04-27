@@ -15,9 +15,9 @@ function App() {
   return (
     <Routes>
       <Route path="/sign-up" element={<SignUp />} />
-      <Route path="/" element={<Login />} />
+      <Route path="/login" element={<Login />} />
       <Route
-        path="/add-expense"
+        path="/"
         element={
           <ProtectedRoute>
             <AddExpense />
