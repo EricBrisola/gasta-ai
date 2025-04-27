@@ -10,7 +10,7 @@ const ProtectedRoute = ({ children }) => {
 
   useEffect(() => {
     if (!loading && !user) {
-      redirectTo("/"); // Redireciona para a página de login apenas quando não está carregando e o usuário não está autenticado
+      redirectTo("/login"); // Redireciona para a página de login apenas quando não está carregando e o usuário não está autenticado
     }
   }, [user, loading]);
 

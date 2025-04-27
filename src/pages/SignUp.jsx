@@ -23,7 +23,7 @@ export const SignUp = () => {
 
   useEffect(() => {
     if (!isLoading && user) {
-      redirectTo("/add-expense");
+      redirectTo("/");
     }
   }, [user, isLoading, redirectTo]);
 

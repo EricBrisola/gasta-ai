@@ -19,7 +19,7 @@ const Navbar = () => {
     <nav className="flex w-full bg-[#645cff] px-6 py-1 max-[430px]:fixed max-[430px]:justify-between">
       <NavbarBtn
         textContent={"Gasta ai"}
-        path={"/add-expense"}
+        path={"/"}
         style={
           "text-white text-2xl flex flex-1 tracking-wide items-center max-lg:flex-none"
         }

@@ -40,12 +40,6 @@ const UserProvider = ({ children }) => {
     return () => unsubscribe();
   }, []);
 
-  // useEffect(() => {
-  //   if (user) {
-  //     getUserData(user?.uid);
-  //   }
-  // }, [user]);
-
   const getUserData = async (id) => {
     //id é o nome/id do documento que voce quer receber
     const docSnap = await getDoc(doc(db, "users", id));
@@ -71,7 +65,7 @@ const UserProvider = ({ children }) => {
       );
       setUser(newUser.user);
       if (newUser.user) {
-        redirectTo("/add-expense");
+        redirectTo("/");
       }
     } catch (error) {
       const errorCode = error.code;
@@ -106,7 +100,7 @@ const UserProvider = ({ children }) => {
 
         // Atualiza o estado do usuário e redireciona
         setUser(user);
-        redirectTo("/add-expense");
+        redirectTo("/");
       }
     } catch (error) {
       errorToast(`Erro: ${error.message}`);
@@ -153,7 +147,7 @@ const UserProvider = ({ children }) => {
       await setDoc(doc(db, "users", userUid), docData);
 
       if (newUser) {
-        redirectTo("/add-expense");
+        redirectTo("/");
         //loginUser(ev, startLoading, stopLoading, formData);
       }
     } catch (error) {
