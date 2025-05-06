@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import GoogleLoginImage from "../assets/google-login-image.png";
 import useRedirect from "../hooks/useRedirect";
 import { useLoading } from "../hooks/useLoading";
@@ -17,9 +17,15 @@ export const SignUp = () => {
 
   const { isLoading, startLoading } = useLoading();
 
-  const { signupUser, loginWithGoogle } = useUser();
+  const { signupUser, loginWithGoogle, user } = useUser();
 
   const redirectTo = useRedirect();
+
+  useEffect(() => {
+    if (!isLoading && user) {
+      redirectTo("/");
+    }
+  }, [user, isLoading, redirectTo]);
 
   const redirectToLoginPage = () => {
     redirectTo("/");

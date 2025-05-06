@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import GoogleLoginImage from "../assets/google-login-image.png";
 import useRedirect from "../hooks/useRedirect";
 import { useLoading } from "../hooks/useLoading";
@@ -17,9 +17,15 @@ export const Login = () => {
   const { isLoading, startLoading, stopLoading } = useLoading();
   const { isModalOpen, openModal, closeModal } = useModal();
 
-  const { loginUser, loginWithGoogle } = useUser();
+  const { loginUser, loginWithGoogle, user } = useUser();
 
   const redirectTo = useRedirect();
+
+  useEffect(() => {
+    if (!isLoading && user) {
+      redirectTo("/");
+    }
+  }, [user, isLoading, redirectTo]);
 
   const handleChange = (ev) => {
     setFormData({
