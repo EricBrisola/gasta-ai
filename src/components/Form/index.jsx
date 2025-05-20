@@ -5,6 +5,9 @@ import { db } from "../../API/firebase";
 import { useUser } from "../../hooks/useUser";
 import useCategories from "../../hooks/useCategories";
 import { toaster } from "../../utils/toaster";
+import Modal from "../Modal";
+import useModal from "../../hooks/useModal";
+import { installments } from "../../utils/payOvertimeValues";
 
 const Form = () => {
   const [expenseValue, setExpenseValue] = useState("0,00");
@@ -14,20 +17,20 @@ const Form = () => {
     category: "food",
     date: dayjs().format("YYYY-MM-DD"),
   });
+
+  const [payOvertimeInfo, setPayOvertimeInfo] = useState(2);
+  const [isPayOvertime, setIsPayOvertime] = useState(false);
+
   const { userData } = useUser();
   const { categories } = useCategories();
   const { sucessToast, errorToast } = toaster();
+  const { isModalOpen, openModal, closeModal } = useModal();
 
   const addExpense = async (expense, userRef) => {
-    try {
-      await addDoc(collection(doc(db, "users", userRef), "expenses"), {
-        ...expense,
-        value: expenseValue.replace(",", "."),
-      });
-      sucessToast("adicionado com sucesso!");
-    } catch (error) {
-      errorToast(`Erro ao criar gasto: ${error}`);
-    }
+    await addDoc(collection(doc(db, "users", userRef), "expenses"), {
+      ...expense,
+      value: expenseValue.replace(",", "."),
+    });
   };
 
   const handleSubmit = async (ev) => {
@@ -38,23 +41,63 @@ const Form = () => {
       return;
     }
 
-    const expenseWithFormatedDate = {
-      ...expense,
-      //trocando o formato da data para milisegundos, assim faciliando na hora das conversões
-      date: dayjs(expense.date).valueOf(),
-    };
+    try {
+      if (isPayOvertime) {
+        let successfullyInstallments = 0;
+        let failedInstallments = 0;
 
-    await addExpense(expenseWithFormatedDate, userData.uid);
+        for (let i = 0; i < payOvertimeInfo; i++) {
+          const nextMonth = dayjs(expense.date).add(i, "month").valueOf();
 
-    setExpense({
-      ...expense,
-      title: "",
-      value: "",
-      category: "food",
-      date: dayjs().format("YYYY-MM-DD"),
-    });
+          const expenseFormatted = {
+            ...expense,
+            title: expense.title + ` ${i + 1}/${payOvertimeInfo}`,
+            date: nextMonth,
+          };
 
-    setExpenseValue("0,00");
+          try {
+            await addExpense(expenseFormatted, userData.uid);
+            successfullyInstallments++;
+          } catch (error) {
+            failedInstallments++;
+          }
+        }
+
+        if (successfullyInstallments > 0) {
+          sucessToast(
+            `${successfullyInstallments} parcela(s) adicionada(s) com sucesso!`,
+          );
+        }
+
+        if (failedInstallments > 0) {
+          errorToast(
+            `${failedInstallments} parcela(s) falharam ao ser adicionadas.`,
+          );
+        }
+      } else {
+        const expenseWithFormatedDate = {
+          ...expense,
+          //trocando o formato da data para milisegundos, assim faciliando na hora das conversões
+          date: dayjs(expense.date).valueOf(),
+        };
+
+        await addExpense(expenseWithFormatedDate, userData.uid);
+        sucessToast("Gasto adicionado com sucesso!");
+      }
+
+      setExpense({
+        ...expense,
+        title: "",
+        value: "",
+        category: "food",
+        date: dayjs().format("YYYY-MM-DD"),
+      });
+
+      setExpenseValue("0,00");
+      setIsPayOvertime(false);
+    } catch (error) {
+      errorToast(`Erro ao criar gasto: ${error}`);
+    }
   };
 
   const handleExpenseInputs = (ev) => {
@@ -111,7 +154,9 @@ const Form = () => {
           htmlFor="new-expense-value-input"
           className="flex flex-col gap-4"
         >
-          <p className="text-lg font-semibold leading-none">Valor</p>
+          <p className="text-lg font-semibold leading-none">
+            {isPayOvertime ? "Parcela" : "Valor"}
+          </p>
           <input
             type="text"
             name="value"
@@ -122,6 +167,22 @@ const Form = () => {
             required
           />
         </label>
+        <article
+          htmlFor="isPayOverTime"
+          className="flex items-center gap-1 text-base font-semibold leading-none"
+        >
+          <input
+            type="checkbox"
+            id="isPayOverTime"
+            className="filters"
+            onChange={() => {
+              !isPayOvertime && openModal(), setIsPayOvertime(!isPayOvertime);
+            }}
+            checked={isPayOvertime}
+          />
+          Gasto a prazo
+          {isPayOvertime && `   (${payOvertimeInfo}x)`}
+        </article>
         <label
           htmlFor="new-expense-category-input"
           className="flex flex-col gap-4"
@@ -154,12 +215,38 @@ const Form = () => {
             onChange={handleExpenseInputs}
             value={expense.date}
             max={dayjs().endOf("year").format("YYYY-MM-DD")}
+            required
           />
         </div>
         <button className="rounded-md bg-[#645cff] p-2 text-white shadow-sm shadow-[#645cff]/20 duration-200 hover:shadow-lg hover:shadow-[#645cff]/40">
           Adicionar
         </button>
       </form>
+      {isModalOpen && (
+        <Modal>
+          <section className="relative flex w-40 flex-col gap-2 rounded bg-[#F7F6FA] p-3 max-[430px]:m-5 max-[430px]:w-80 max-[430px]:p-2">
+            <button
+              type="button"
+              className="absolute right-1 top-1 h-7 w-7 cursor-pointer rounded border-none bg-red-600 pb-1 text-white"
+              onClick={closeModal}
+            >
+              x
+            </button>
+            <article className="flex flex-col items-center gap-2">
+              <p className="font-semibold">Parcelas</p>
+              <select
+                className="h-10 w-full rounded border-[1px] border-[#645cff] bg-transparent p-2 outline-none focus:border-2"
+                value={payOvertimeInfo}
+                onChange={(ev) => setPayOvertimeInfo(ev.target.value)}
+              >
+                {installments.map((item) => {
+                  return <option key={item.times}>{item.times}</option>;
+                })}
+              </select>
+            </article>
+          </section>
+        </Modal>
+      )}
     </article>
   );
 };
