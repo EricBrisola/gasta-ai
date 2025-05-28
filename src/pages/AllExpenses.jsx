@@ -19,14 +19,13 @@ import { db } from "../API/firebase";
 import { useUser } from "../hooks/useUser";
 import { useLoading } from "../hooks/useLoading";
 import Modal from "../components/Modal";
-import Animation from "../components/Animation";
-import loadingAnimation from "../assets/loading_animation.json";
 import categoriesImgHashMap from "../assets/categoriesImgsHashMap";
 import EditForm from "../components/UpdateForm";
 import useModal from "../hooks/useModal";
 import { months } from "../utils/months";
 import useCategories from "../hooks/useCategories";
 import { toaster } from "../utils/toaster";
+import ExpenseCardSkeleton from "../components/ExpenseCardSkeleton";
 
 export const AllExpenses = () => {
   const [allExpenses, setAllExpenses] = useState([]);
@@ -290,9 +289,9 @@ export const AllExpenses = () => {
           />
           <div className="flex flex-wrap justify-center gap-6 px-7 py-4 max-[430px]:px-1 max-[430px]:py-4 max-[320px]:px-0">
             {isLoading ? (
-              <Modal>
-                <Animation animation={loadingAnimation} />
-              </Modal>
+              [...Array(12)].map((_, index) => (
+                <ExpenseCardSkeleton key={index} />
+              ))
             ) : allExpenses.length >= 1 ? (
               allExpenses.map((expense) => {
                 return (
