@@ -19,13 +19,12 @@ import { db } from "../API/firebase";
 import { useUser } from "../hooks/useUser";
 import { useLoading } from "../hooks/useLoading";
 import Modal from "../components/Modal";
-import Animation from "../components/Animation";
-import loadingAnimation from "../assets/loading_animation.json";
 import categoriesImgHashMap from "../assets/categoriesImgsHashMap";
 import EditForm from "../components/UpdateForm";
 import useModal from "../hooks/useModal";
 import useCategories from "../hooks/useCategories";
 import { toaster } from "../utils/toaster";
+import ExpenseCardSkeleton from "../components/ExpenseCardSkeleton";
 
 export const LastWeek = () => {
   const [weeklyExpenses, setWeeklyExpenses] = useState([]);
@@ -235,9 +234,9 @@ export const LastWeek = () => {
           />
           <div className="flex flex-wrap justify-center gap-6 px-7 py-4 max-[430px]:px-1 max-[430px]:py-4 max-[320px]:px-0">
             {isLoading ? (
-              <Modal>
-                <Animation animation={loadingAnimation} />
-              </Modal>
+              [...Array(12)].map((_, index) => (
+                <ExpenseCardSkeleton key={index} />
+              ))
             ) : weeklyExpenses.length >= 1 ? (
               weeklyExpenses.map((expense) => {
                 return (
@@ -258,7 +257,7 @@ export const LastWeek = () => {
                 );
               })
             ) : (
-              <p className="flex w-full justify-center text-2xl font-normal text-[#102a42]">
+              <p className="flex justify-center text-2xl font-normal text-[#102a42] max-[430px]:w-72">
                 Sem gastos registrados nesta semana
               </p>
             )}

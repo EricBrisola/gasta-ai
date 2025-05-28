@@ -10,7 +10,7 @@ const Navbar = () => {
   const { userData, logoutUser } = useUser();
 
   const navButtonStyle =
-    "text-white text-base flex flex-2 items-center tracking-wide hover:bg-[#cfe8ff] duration-200 p-2 rounded-md hover:text-[#617d98] max-[430px]:rounded-none max-[430px]:justify-center max-[430px]:bg-[#5148cc] max-[430px]:rounded-md";
+    "text-white text-base flex flex-2 items-center tracking-wide hover:bg-[#cfe8ff] duration-200 p-2 rounded-md hover:text-[#617d98] max-[430px]:rounded-none max-[430px]:justify-center max-[430px]:bg-[#5148cc] max-[430px]:rounded-lg";
 
   const userNameStyle =
     "text-white text-base flex flex-2 items-center tracking-wide p-2 rounded-md max-[430px]:self-center max-[430px]:text-lg";
@@ -84,6 +84,11 @@ const Navbar = () => {
                 userData?.name.slice(1, userData?.name.length) ||
                 "Carregando..."}
             </p>
+            <NavbarBtn
+              textContent={"Registrar"}
+              path="/"
+              style={navButtonStyle}
+            />
             <NavbarBtn
               textContent="Hoje"
               path="/today"

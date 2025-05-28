@@ -17,7 +17,7 @@ const ExpenseCard = ({
         {title[0].toUpperCase() + title.slice(1)}
       </p>
       <img src={categoryImg} alt="category-img" className="h-8 w-8" />
-      <p className="text-md text-2xl font-medium text-[#102a42] max-[376px]:text-xl max-[320px]:text-lg">
+      <p className="text-2xl font-medium text-[#102a42] max-[376px]:text-xl max-[320px]:text-lg">
         R${value.slice(0, 7).replace(".", ",")}
       </p>
       <div className="flex h-1/6 w-full rounded-b-md border-t-2 border-[#645cff]">

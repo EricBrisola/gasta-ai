@@ -224,7 +224,7 @@ const Form = () => {
       </form>
       {isModalOpen && (
         <Modal>
-          <section className="relative flex w-40 flex-col gap-2 rounded bg-[#F7F6FA] p-3 max-[430px]:m-5 max-[430px]:w-80 max-[430px]:p-2">
+          <section className="relative flex w-40 flex-col gap-2 rounded bg-[#F7F6FA] p-3">
             <button
               type="button"
               className="absolute right-1 top-1 h-7 w-7 cursor-pointer rounded border-none bg-red-600 pb-1 text-white"
