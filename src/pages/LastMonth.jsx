@@ -230,7 +230,7 @@ export const LastMonth = () => {
         <section className="flex flex-1 flex-col gap-3">
           <Header
             total={monthlyTotal}
-            date={`01/0${dayjs().month() + 1}/${dayjs().year()} - ${dayjs().endOf("month").format("DD/MM/YYYY")}`}
+            date={`${dayjs().startOf("month").format("DD/MM/YYYY")} - ${dayjs().endOf("month").format("DD/MM/YYYY")}`}
           />
           <div className="flex flex-wrap justify-center gap-6 px-7 py-4 max-[430px]:px-1 max-[430px]:py-4 max-[320px]:px-0">
             {isLoading ? (
